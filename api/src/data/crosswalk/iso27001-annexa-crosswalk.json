@@ -1,0 +1,463 @@
+{
+  "sourceStandard": "ISO/IEC 27001:2013 Annex A",
+  "targetFrameworks": ["GDPR", "SOC2", "HIPAA", "CIS", "PCIDSS", "CERTIN"],
+  "notes": "Maps every ISO 27001:2013 Annex A clause referenced by a Prism connector check to the corresponding control in each other seeded framework. Curated 2026-09-09 from the published informative mappings cited per entry. Frameworks with no defensible correspondence for a clause are omitted for that clause (empty arrays are invalid). DPDPA is NOT a target here — connector checks carry their own dpdpaControlAreas and DPDPA matches on control_area. AWSWAF / AZUREWAF are architecture reviews, not control catalogues, and are intentionally uncovered. control_reference strings match the bare-ref normalisation the framework import pipeline writes to question_framework_controls (see api/src/routes/frameworks.js).",
+  "clauses": {
+    "A.6.1.2": {
+      "title": "Segregation of duties",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Separating conflicting duties limits the ability of a single actor to compromise confidentiality or integrity of processing.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC5.1", "rationale": "The entity selects control activities, including segregation of incompatible duties, to mitigate risks.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(4)", "rationale": "Information-access-management policies must separate authorization, establishment and modification of access.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "6.8", "rationale": "Define and maintain role-based access control so no single role holds conflicting privileges.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "7.2.1", "rationale": "An access-control model assigns privileges by job classification and function.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.6.2.1": {
+      "title": "Mobile device policy",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "A mobile-device policy is an organisational measure protecting personal data processed off-premises.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.7", "rationale": "The entity restricts the transmission, movement and removal of information to authorised users and protects it on mobile devices.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.310(d)(1)", "rationale": "Device and media controls govern receipt and removal of hardware holding ePHI.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "3.6", "rationale": "Encrypt data on end-user devices, including portable and mobile devices.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.3.3", "rationale": "Usage policies define acceptable use and location of end-user technologies.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.8.1.1": {
+      "title": "Inventory of assets",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 30", "rationale": "Knowing which assets process personal data underpins the record of processing activities.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 30" }],
+        "SOC2": [{ "ref": "CC6.1", "rationale": "The entity identifies and manages the inventory of information assets as a basis for logical access security.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.310(d)(1)", "rationale": "Maintaining a record of hardware and media movements requires an asset inventory.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "1.1", "rationale": "Establish and maintain a detailed enterprise asset inventory.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.5.1", "rationale": "Maintain an inventory of system components in scope for PCI DSS.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.8.1.2": {
+      "title": "Ownership of assets",
+      "mappings": {
+        "SOC2": [{ "ref": "CC2.1", "rationale": "Accountability for information assets is assigned to enable control operation.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(2)", "rationale": "Assigned security responsibility identifies the person accountable for policies and procedures.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "1.1", "rationale": "The enterprise asset inventory records an owner for each asset.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.5.1", "rationale": "The component inventory records the function and owner of each in-scope asset.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.8.2.1": {
+      "title": "Classification of information",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)", "rationale": "Classifying information by sensitivity drives the risk-appropriate level of protection for personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "C1.1", "rationale": "The entity identifies and maintains confidential information to meet its confidentiality objectives.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(1)(ii)(A)", "rationale": "The risk analysis must identify where ePHI is created, received, maintained or transmitted.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "3.7", "rationale": "Establish and maintain a data classification scheme.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "9.4.1", "rationale": "Media is classified so the sensitivity of the data can be determined.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.8.2.3": {
+      "title": "Handling of assets",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(a)", "rationale": "Procedures for handling assets — including encryption of stored data — protect personal data at rest.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.1", "rationale": "The entity protects information assets during storage through access restriction and encryption.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(a)(2)(iv)", "rationale": "Encryption and decryption is an addressable control for ePHI at rest.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "3.11", "rationale": "Encrypt sensitive data at rest.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "3.5.1", "rationale": "Primary account numbers are rendered unreadable wherever stored.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.1.1": {
+      "title": "Access control policy",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 5(1)(f)", "rationale": "An access-control policy enforces the integrity and confidentiality principle.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 5(1)(f)" }],
+        "SOC2": [{ "ref": "CC6.1", "rationale": "The entity implements logical access security measures over protected information assets.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(4)", "rationale": "Information-access-management policies authorise access to ePHI.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "6.1", "rationale": "Establish and maintain an access-granting process.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "7.1", "rationale": "Processes and mechanisms for restricting access by business need to know are defined.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.1.2": {
+      "title": "Access to networks and network services",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Restricting network-service access limits exposure of systems processing personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.6", "rationale": "The entity implements boundary-protection controls over network access from outside its boundaries.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(a)(1)", "rationale": "Technical access controls allow access only to authorised persons or software.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "12.2", "rationale": "Establish and maintain a secure network architecture.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "1.3.1", "rationale": "Inbound traffic to the cardholder data environment is restricted to that which is necessary.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.2.1": {
+      "title": "User registration and de-registration",
+      "mappings": {
+        "SOC2": [{ "ref": "CC6.2", "rationale": "The entity registers and authorises users before granting access, and removes access when no longer required.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(4)(ii)(B)", "rationale": "Access-authorisation procedures govern granting access to ePHI.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "5.1", "rationale": "Establish and maintain an inventory of accounts.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "8.2.1", "rationale": "All users are assigned a unique ID before access to system components is allowed.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.2.2": {
+      "title": "User access provisioning",
+      "mappings": {
+        "SOC2": [{ "ref": "CC6.3", "rationale": "The entity authorises, modifies or removes access to data and systems based on roles and responsibilities.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(4)(ii)(C)", "rationale": "Access-establishment-and-modification procedures provision user access to ePHI.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "6.1", "rationale": "Grant access rights through a defined process on hire or role change.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "7.2.2", "rationale": "Access is assigned based on job classification and least privilege.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.2.3": {
+      "title": "Management of privileged access rights",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Constraining privileged accounts reduces the risk of unauthorised access to personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.1", "rationale": "The entity restricts privileged logical access to authorised personnel.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(3)", "rationale": "Workforce-security controls limit access to those whose role requires it, including privileged roles.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "5.4", "rationale": "Restrict administrator privileges to dedicated administrator accounts.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "7.2.5", "rationale": "Privileged access is assigned and reviewed for system and application accounts.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.2.4": {
+      "title": "Management of secret authentication information of users",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Protecting credentials and secrets safeguards access to systems processing personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.1", "rationale": "The entity manages credentials and authentication secrets for identified users.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(5)(ii)(D)", "rationale": "Password-management procedures govern creating, changing and safeguarding passwords.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "5.2", "rationale": "Use unique passwords for all enterprise assets.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "8.3.1", "rationale": "Strong authentication for users and administrators is managed with defined factors.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.2.5": {
+      "title": "Review of user access rights",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 5(2)", "rationale": "Periodic access reviews evidence the accountability principle for personal-data access.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 5(2)" }],
+        "SOC2": [{ "ref": "CC6.3", "rationale": "The entity reviews access rights periodically for appropriateness.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(4)(ii)(C)", "rationale": "Access is reviewed and modified as part of access establishment and modification.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "6.2", "rationale": "Establish and maintain a process to revoke access when no longer required, informed by review.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "7.2.4", "rationale": "All user accounts and access privileges are reviewed at least once every six months.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.2.6": {
+      "title": "Removal or adjustment of access rights",
+      "mappings": {
+        "SOC2": [{ "ref": "CC6.3", "rationale": "The entity removes access to data and systems when no longer required or upon termination.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(3)(ii)(C)", "rationale": "Termination procedures end access to ePHI when employment ends.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "5.3", "rationale": "Disable dormant accounts.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "8.2.5", "rationale": "Access for terminated users is immediately revoked.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.4.1": {
+      "title": "Information access restriction",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 25(2)", "rationale": "Restricting information access by default enforces data-protection by design and by default.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 25(2)" }],
+        "SOC2": [{ "ref": "CC6.1", "rationale": "The entity restricts logical access to information based on need.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(a)(1)", "rationale": "Technical policies restrict access to ePHI to authorised persons and software.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "3.3", "rationale": "Configure data-access control lists based on need to know.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "7.2.2", "rationale": "Access is limited to the least privileges necessary to perform job responsibilities.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.4.2": {
+      "title": "Secure log-on procedures",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Secure authentication, including multi-factor, is a measure ensuring ongoing confidentiality of processing.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.1", "rationale": "The entity uses authentication mechanisms, including MFA, to control logical access.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(d)", "rationale": "Person-or-entity authentication verifies that a user seeking access is who they claim to be.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "6.3", "rationale": "Require MFA for externally-exposed applications.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "8.4.2", "rationale": "MFA is implemented for all access into the cardholder data environment.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Direction 4", "rationale": "Secure and authenticated access to ICT systems must be maintained.", "source": "CERT-In Directions 28.04.2022 (No. 20(3)/2022-CERT-In)" }]
+      }
+    },
+    "A.9.4.3": {
+      "title": "Password management system",
+      "mappings": {
+        "SOC2": [{ "ref": "CC6.1", "rationale": "The entity enforces password quality and lifecycle through a management system.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(5)(ii)(D)", "rationale": "Procedures for creating, changing and safeguarding passwords are implemented.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "5.2", "rationale": "Enforce minimum password length and uniqueness across enterprise assets.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "8.3.6", "rationale": "Minimum password length and complexity requirements are enforced.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.9.4.4": {
+      "title": "Use of privileged utility programs",
+      "mappings": {
+        "SOC2": [{ "ref": "CC6.8", "rationale": "The entity restricts the installation and use of unauthorised or privileged software.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(c)(1)", "rationale": "Integrity controls protect ePHI from improper alteration by privileged utilities.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "2.5", "rationale": "Allowlist authorised software and block unauthorised utilities.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "2.2.4", "rationale": "Only necessary services, protocols and daemons are enabled.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.10.1.1": {
+      "title": "Policy on the use of cryptographic controls",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(a)", "rationale": "A cryptographic-controls policy governs risk-appropriate encryption and pseudonymisation of personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.7", "rationale": "The entity protects information during transmission, movement and storage using approved cryptographic safeguards.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(a)(2)(iv)", "rationale": "Encryption and decryption is an addressable technical safeguard for electronic protected health information.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "3.6", "rationale": "Encrypt data on end-user devices according to an enterprise encryption standard.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "3.5.1", "rationale": "Stored account data is rendered unreadable using strong cryptography.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Direction 4", "rationale": "Approved cryptographic controls support secure and authenticated access to ICT systems.", "source": "CERT-In Directions 28.04.2022 (No. 20(3)/2022-CERT-In)" }]
+      }
+    },
+    "A.10.1.2": {
+      "title": "Key management",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(a)", "rationale": "Effective key management is intrinsic to the encryption of personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.1", "rationale": "The entity manages cryptographic keys over their lifecycle to protect information.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(a)(2)(iv)", "rationale": "Encryption of ePHI depends on protected key generation, storage and rotation.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "3.11", "rationale": "Encrypt sensitive data at rest using managed keys.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "3.7.1", "rationale": "Key-management policies and procedures cover key generation, distribution and rotation.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.12.1.1": {
+      "title": "Documented operating procedures",
+      "mappings": {
+        "SOC2": [{ "ref": "CC2.2", "rationale": "The entity documents and communicates the procedures needed to operate its controls.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.316(a)", "rationale": "Policies and procedures are implemented and maintained in written form.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "4.1", "rationale": "Establish and maintain a documented secure configuration process.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.1.1", "rationale": "An information-security policy is documented, published and disseminated.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.12.1.2": {
+      "title": "Change management",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 25(1)", "rationale": "Controlled change keeps data-protection measures effective as systems evolve.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 25(1)" }],
+        "SOC2": [{ "ref": "CC8.1", "rationale": "The entity authorises, designs, tests and approves changes to infrastructure and software.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(8)", "rationale": "Periodic evaluation covers environmental and operational changes affecting ePHI security.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "4.1", "rationale": "Configuration changes are managed through the secure configuration process.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "6.5.1", "rationale": "Changes to system components follow documented change-control procedures.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.12.2.1": {
+      "title": "Controls against malware",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Anti-malware controls preserve the integrity and availability of systems processing personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.8", "rationale": "The entity implements controls to prevent or detect and act upon malicious software.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(5)(ii)(B)", "rationale": "Protection from malicious software is an addressable security-awareness control.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "10.1", "rationale": "Deploy and maintain anti-malware software.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "5.2.1", "rationale": "An anti-malware solution is deployed on all system components at risk.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.12.3.1": {
+      "title": "Information backup",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(c)", "rationale": "The ability to restore availability and access to personal data in a timely manner depends on backups.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "A1.2", "rationale": "The entity maintains and tests backup processes to meet availability commitments.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(7)(ii)(A)", "rationale": "A data-backup plan creates and maintains retrievable exact copies of ePHI.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "11.2", "rationale": "Perform automated backups of in-scope enterprise assets.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }]
+      }
+    },
+    "A.12.4.1": {
+      "title": "Event logging",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Logging user and administrator activity supports detecting unauthorised processing of personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC7.2", "rationale": "The entity monitors system components for anomalies through event logging.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(b)", "rationale": "Audit controls record and examine activity in systems containing ePHI.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "8.2", "rationale": "Collect audit logs from enterprise assets.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "10.2.1", "rationale": "Audit logs capture the events needed to reconstruct activity.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Direction 5", "rationale": "Logs of ICT systems must be enabled and maintained.", "source": "CERT-In Directions 28.04.2022 (No. 20(3)/2022-CERT-In)" }]
+      }
+    },
+    "A.12.4.2": {
+      "title": "Protection of log information",
+      "mappings": {
+        "SOC2": [{ "ref": "CC7.2", "rationale": "Logging infrastructure and its records are protected from tampering to support reliable monitoring.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(c)(1)", "rationale": "Integrity controls protect audit records from improper alteration or destruction.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "8.3", "rationale": "Ensure adequate audit-log storage and protect logs from alteration.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "10.3.2", "rationale": "Audit-log files are protected to prevent modification.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.12.5.1": {
+      "title": "Installation of software on operational systems",
+      "mappings": {
+        "SOC2": [{ "ref": "CC8.1", "rationale": "Software deployed to production is authorised and controlled.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(c)(1)", "rationale": "Controlling software installation protects ePHI integrity on operational systems.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "2.5", "rationale": "Allowlist authorised software so only approved software runs.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "6.3", "rationale": "Security vulnerabilities are managed for bespoke, custom and third-party software.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.12.4.3": {
+      "title": "Administrator and operator logs",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 5(2)", "rationale": "Administrator activity logs provide evidence that the controller can demonstrate accountability.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 5" }],
+        "SOC2": [{ "ref": "CC7.2", "rationale": "The entity monitors system components and privileged activity for anomalous events.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(b)", "rationale": "Audit controls record and examine activity in systems containing electronic protected health information.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "8.2", "rationale": "Collect audit logs, including privileged administrative activity, across enterprise assets.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "10.2.1.2", "rationale": "Audit logs capture actions taken by individuals with administrative access.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Direction 5", "rationale": "ICT system logs must be maintained securely and made available for incident response.", "source": "CERT-In Directions 28.04.2022 (No. 20(3)/2022-CERT-In)" }]
+      }
+    },
+    "A.12.6.1": {
+      "title": "Management of technical vulnerabilities",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(d)", "rationale": "A process to regularly test and remediate vulnerabilities evaluates the effectiveness of security measures.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC7.1", "rationale": "The entity identifies and manages vulnerabilities through detection and monitoring.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(1)(ii)(B)", "rationale": "Risk-management measures reduce vulnerabilities to a reasonable level.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "7.1", "rationale": "Establish and maintain a vulnerability-management process.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "6.3.1", "rationale": "Security vulnerabilities are identified and assigned a risk ranking.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Direction 6", "rationale": "Vulnerabilities and their remediation must be tracked for reporting.", "source": "CERT-In Directions 28.04.2022 (No. 20(3)/2022-CERT-In)" }]
+      }
+    },
+    "A.13.1.1": {
+      "title": "Network controls",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Network segmentation and filtering protect the confidentiality of personal data in transit and at the boundary.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.6", "rationale": "The entity implements boundary protections to restrict network access.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(e)(1)", "rationale": "Transmission-security controls guard ePHI over networks.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "12.2", "rationale": "Establish and maintain a secure network architecture.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "1.4.1", "rationale": "Network security controls are implemented between trusted and untrusted networks.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.13.1.3": {
+      "title": "Segregation in networks",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Network segregation limits the blast radius of a compromise affecting personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.6", "rationale": "The entity implements boundary protection to segregate and restrict access between network segments.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(a)(1)", "rationale": "Technical access controls include isolating systems that store or transmit ePHI.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "12.2", "rationale": "Establish and maintain a secure network architecture using segmentation.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "1.3.1", "rationale": "System components in a trusted network are segmented from untrusted networks.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.13.2.1": {
+      "title": "Information transfer policies and procedures",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(a)", "rationale": "Encryption of personal data in transit protects it during transfer between parties and systems.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.7", "rationale": "The entity protects information during transmission and movement.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(e)(2)(ii)", "rationale": "Encryption is an addressable transmission-security control for ePHI in transit.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "3.10", "rationale": "Encrypt sensitive data in transit.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "4.2.1", "rationale": "Strong cryptography protects cardholder data during transmission over open networks.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.13.2.3": {
+      "title": "Electronic messaging",
+      "mappings": {
+        "SOC2": [{ "ref": "CC6.7", "rationale": "Information sent via electronic messaging is protected in transit.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(e)(1)", "rationale": "Transmission-security controls apply to ePHI sent by electronic messaging.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "9.2", "rationale": "Use DNS filtering and email security services to protect messaging.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "4.2.2", "rationale": "PANs are never sent by end-user messaging technologies without strong cryptography.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.14.1.2": {
+      "title": "Securing application services on public networks",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Application services traversing public networks must protect the confidentiality and integrity of personal data against interception and modification.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.7", "rationale": "The entity restricts the transmission of information over public networks and protects it with encryption and application-layer controls.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(e)(1)", "rationale": "Transmission security safeguards ePHI transmitted over an electronic communications network.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "13.10", "rationale": "Deploy an application-layer firewall / WAF to inspect and filter traffic to public-facing applications.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "6.4.1", "rationale": "Public-facing web applications are protected against attacks by an automated technical solution that detects and prevents web-based attacks.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Annexure I — Application security", "rationale": "CERT-In guidelines require WAF protection and TLS for public-facing applications.", "source": "CERT-In technical guidelines — ISO/IEC 27001 alignment" }]
+      }
+    },
+    "A.14.1.3": {
+      "title": "Protecting application services transactions",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(b)", "rationale": "Transaction integrity controls prevent incomplete transmission, mis-routing, and unauthorised message alteration of personal data.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC6.7", "rationale": "The entity protects information during transmission, including the integrity of application transactions.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.312(c)(1)", "rationale": "Integrity controls protect ePHI from improper alteration or destruction, including in transit.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "16.11", "rationale": "Leverage vetted modules and enforce input/output validation for application transactions.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "6.2.4", "rationale": "Software engineering techniques prevent or mitigate common attacks against application transactions (injection, tampering).", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.14.2.2": {
+      "title": "System change control procedures",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 25(1)", "rationale": "Change control keeps privacy safeguards intact through the development lifecycle.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 25(1)" }],
+        "SOC2": [{ "ref": "CC8.1", "rationale": "Changes to applications and infrastructure follow a controlled process.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(8)", "rationale": "Technical evaluation follows changes that affect the security of ePHI.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "16.1", "rationale": "Establish and maintain a secure application-development process.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "6.5.2", "rationale": "Significant changes are followed by verification that applicable controls remain in place.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.14.2.5": {
+      "title": "Secure system engineering principles",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 25", "rationale": "Data protection by design and by default is engineered into systems from the outset.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 25" }],
+        "SOC2": [{ "ref": "CC8.1", "rationale": "Secure design principles are applied when developing and configuring systems.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "CIS": [{ "ref": "16.1", "rationale": "Establish and maintain a secure application-development process incorporating secure-design standards.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "6.2.1", "rationale": "Bespoke and custom software is developed securely, based on industry standards and secure design.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.15.1.1": {
+      "title": "Information security policy for supplier relationships",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 28(1)", "rationale": "Controllers use only processors providing sufficient guarantees of appropriate security measures.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 28" }],
+        "SOC2": [{ "ref": "CC9.2", "rationale": "The entity assesses and manages risks arising from vendors and business partners.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(b)(1)", "rationale": "Business-associate contracts require safeguards for ePHI handled by third parties.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "15.1", "rationale": "Establish and maintain an inventory of service providers.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.8.2", "rationale": "Written agreements with third-party service providers acknowledge their security responsibilities.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.15.2.1": {
+      "title": "Monitoring and review of supplier services",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 28(3)(h)", "rationale": "The processor makes available information for, and contributes to, audits by the controller.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 28" }],
+        "SOC2": [{ "ref": "CC9.2", "rationale": "The entity monitors the performance of vendors against commitments and requirements.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(b)(1)", "rationale": "The covered entity obtains assurances that business associates safeguard ePHI on an ongoing basis.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "15.5", "rationale": "Assess service providers according to the enterprise's service-provider management policy.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.8.4", "rationale": "A programme monitors third-party service providers' PCI DSS compliance status at least annually.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.16.1.2": {
+      "title": "Reporting information security events",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 33(1)", "rationale": "Personal-data breaches are notified to the supervisory authority without undue delay.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 33" }],
+        "SOC2": [{ "ref": "CC7.3", "rationale": "The entity evaluates security events to determine whether they could result in a failure to meet objectives.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(6)(ii)", "rationale": "Security incidents are identified, reported and responded to.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "17.2", "rationale": "Establish and maintain contact information and a process for reporting incidents.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.10.3", "rationale": "Specific personnel are designated to be available to respond to suspected or confirmed incidents.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Direction 1", "rationale": "Cyber incidents must be reported to CERT-In within 6 hours of noticing.", "source": "CERT-In Directions 28.04.2022 (No. 20(3)/2022-CERT-In)" }]
+      }
+    },
+    "A.16.1.4": {
+      "title": "Assessment of and decision on information security events",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 33(1)", "rationale": "The controller assesses whether a breach is likely to result in a risk to the rights and freedoms of individuals.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 33" }],
+        "SOC2": [{ "ref": "CC7.4", "rationale": "The entity responds to identified security incidents by executing a defined incident-response programme.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(6)(ii)", "rationale": "Response and reporting includes assessing the harmful effects of security incidents.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "17.4", "rationale": "Establish and maintain an incident-response process that classifies and prioritises events.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.10.4", "rationale": "Personnel responsible for responding to incidents are appropriately trained.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Direction 1", "rationale": "Incident classification informs the mandatory 6-hour report to CERT-In.", "source": "CERT-In Directions 28.04.2022 (No. 20(3)/2022-CERT-In)" }]
+      }
+    },
+    "A.16.1.5": {
+      "title": "Response to information security incidents",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 34", "rationale": "Where a breach is high risk, affected data subjects are informed without undue delay as part of the response.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 34" }],
+        "SOC2": [{ "ref": "CC7.4", "rationale": "The entity contains, remediates and recovers from security incidents per its response programme.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(6)(ii)", "rationale": "The entity mitigates, to the extent practicable, harmful effects of known security incidents.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "17.7", "rationale": "Conduct routine incident-response exercises and refine the process.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.10.2", "rationale": "The incident-response plan is reviewed and tested at least annually.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Direction 2", "rationale": "Entities must provide information and assistance to CERT-In during incident response.", "source": "CERT-In Directions 28.04.2022 (No. 20(3)/2022-CERT-In)" }]
+      }
+    },
+    "A.18.1.1": {
+      "title": "Identification of applicable legislation and contractual requirements",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 24(1)", "rationale": "The controller identifies its legal obligations and implements measures to demonstrate compliance.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 24" }],
+        "SOC2": [{ "ref": "CC2.3", "rationale": "The entity identifies and assesses external legal and regulatory requirements relevant to its objectives.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.316(a)", "rationale": "Reasonable and appropriate policies are implemented to comply with the standards and implementation specifications.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "PCIDSS": [{ "ref": "12.1.1", "rationale": "An overall information-security policy addresses applicable legal and regulatory requirements.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    },
+    "A.18.1.3": {
+      "title": "Protection of records",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 5(1)(e)", "rationale": "Records are retained no longer than necessary and protected against loss for the retention period.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 5(1)(e)" }],
+        "SOC2": [{ "ref": "CC7.2", "rationale": "Records including audit history are retained and protected to support monitoring and investigation.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.316(b)(1)", "rationale": "Documentation is retained for six years from creation or last effective date.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "8.10", "rationale": "Retain audit logs for a defined, adequate period.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "10.5.1", "rationale": "Audit-log history is retained for at least 12 months, with 3 months immediately available.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }],
+        "CERTIN": [{ "ref": "Direction 5", "rationale": "Logs must be maintained securely for a rolling period of 180 days within Indian jurisdiction.", "source": "CERT-In Directions 28.04.2022 (No. 20(3)/2022-CERT-In)" }]
+      }
+    },
+    "A.18.1.4": {
+      "title": "Privacy and protection of personally identifiable information",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 5(1)(f)", "rationale": "Personal data is processed in a manner ensuring appropriate security, including protection against unauthorised processing.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 5(1)(f)" }],
+        "SOC2": [{ "ref": "P4.1", "rationale": "The entity limits the use of personal information to the purposes identified in its privacy notice.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.530(c)", "rationale": "Administrative, technical and physical safeguards protect the privacy of protected health information.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "3.1", "rationale": "Establish and maintain a data-management process covering sensitive and personal data.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }]
+      }
+    },
+    "A.18.2.2": {
+      "title": "Compliance with security policies and standards",
+      "mappings": {
+        "GDPR": [{ "ref": "Art. 32(1)(d)", "rationale": "A process for regularly testing, assessing and evaluating the effectiveness of security measures.", "source": "ISO/IEC 27701:2019 Annex D; GDPR Art. 32" }],
+        "SOC2": [{ "ref": "CC4.1", "rationale": "The entity evaluates whether controls are present and functioning through ongoing and separate evaluations.", "source": "AICPA 2017 TSC — ISO/IEC 27001:2013 mapping" }],
+        "HIPAA": [{ "ref": "§164.308(a)(8)", "rationale": "Periodic technical and non-technical evaluation establishes the extent to which controls meet requirements.", "source": "NIST SP 800-66r2 — ISO/IEC 27001 crosswalk" }],
+        "CIS": [{ "ref": "4.1", "rationale": "Managed configuration standards are reviewed and enforced against a documented baseline.", "source": "CIS Controls v8.1 — ISO/IEC 27001:2013 mapping" }],
+        "PCIDSS": [{ "ref": "12.4.1", "rationale": "Responsibility is assigned for monitoring compliance with the information-security programme.", "source": "PCI DSS v4.0.1 — ISO/IEC 27001 mapping (informative)" }]
+      }
+    }
+  }
+}

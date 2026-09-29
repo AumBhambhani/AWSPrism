@@ -1,0 +1,16 @@
+{
+  "key": "purview",
+  "title": "Microsoft Purview",
+  "category": "data_governance",
+  "authTypes": ["oauth2"],
+  "tests": [
+    { "testKey": "purview.datamap.sources_scanned", "title": "Registered data sources have a recent successful scan", "severityDefault": "high", "isoReferences": ["A.8.1.1"] },
+    { "testKey": "purview.datamap.scan_schedule_configured", "title": "Registered data sources have a recurring scan schedule", "severityDefault": "medium", "isoReferences": ["A.8.1.1"] },
+    { "testKey": "purview.datamap.classification_applied", "title": "Scanned assets have classifications applied", "severityDefault": "medium", "isoReferences": ["A.8.2.1"] },
+    { "testKey": "purview.datamap.sensitivity_labels_applied", "title": "Scanned assets have sensitivity labels applied", "severityDefault": "medium", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "purview.audit.unified_logging_enabled", "title": "Unified audit logging is enabled", "severityDefault": "critical", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "purview.audit.subscriptions_active", "title": "Required audit log content-type subscriptions are active", "severityDefault": "high", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "purview.audit.dlp_alerts_available", "title": "DLP audit content is available", "severityDefault": "high", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "purview.audit.content_recently_available", "title": "Audit content is actively flowing", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] }
+  ]
+}

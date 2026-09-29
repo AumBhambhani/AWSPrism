@@ -1,0 +1,17 @@
+{
+  "key": "microsoft_365",
+  "name": "Microsoft 365",
+  "category": "collaboration",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "microsoft_365.exchange.mailbox_audit_logging_enabled", "title": "Mailbox audit logging is enabled", "severityDefault": "critical", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "microsoft_365.exchange.no_external_auto_forwarding", "title": "Automatic forwarding to external domains is blocked", "severityDefault": "high", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "microsoft_365.sharepoint.external_sharing_restricted", "title": "SharePoint and OneDrive external sharing is restricted", "severityDefault": "critical", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "microsoft_365.sharepoint.dlp_policy_configured", "title": "Data Loss Prevention policies are configured for the tenant", "severityDefault": "critical", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "microsoft_365.sharepoint.sensitivity_label_policy_enforced", "title": "Sensitivity label policies are configured", "severityDefault": "high", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "microsoft_365.intune.compliance_policy_assigned_all_platforms", "title": "Device compliance policies are assigned for every managed platform", "severityDefault": "high", "isoReferences": ["A.6.2.1"] },
+    { "testKey": "microsoft_365.intune.noncompliant_devices_remediated", "title": "Managed devices are compliant or being remediated", "severityDefault": "medium", "isoReferences": ["A.6.2.1"] },
+    { "testKey": "microsoft_365.defenderoffice.safe_links_enabled", "title": "Safe Links protection is enabled for email and Office apps", "severityDefault": "high", "isoReferences": ["A.12.2.1"] },
+    { "testKey": "microsoft_365.defenderoffice.safe_attachments_enabled", "title": "Safe Attachments protection is enabled", "severityDefault": "high", "isoReferences": ["A.12.2.1"] }
+  ]
+}

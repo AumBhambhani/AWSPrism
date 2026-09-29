@@ -1,0 +1,23 @@
+{
+  "key": "salesforce",
+  "name": "Salesforce",
+  "category": "business_apps",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "salesforce.user.mfa_enforced", "title": "Multi-factor authentication is enforced for all users", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "salesforce.user.no_inactive_high_privilege", "title": "No inactive users retain a high-privilege profile or permission set", "severityDefault": "high", "isoReferences": ["A.9.2.1"] },
+
+    { "testKey": "salesforce.profile.password_policy_strength", "title": "Org password policy meets minimum strength requirements", "severityDefault": "high", "isoReferences": ["A.9.4.3"] },
+    { "testKey": "salesforce.profile.least_privilege_admin_count", "title": "Number of users with the System Administrator profile is within policy", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+
+    { "testKey": "salesforce.connected_app.oauth_scopes_minimal", "title": "Connected/External Client Apps do not request excessive OAuth scopes", "severityDefault": "high", "isoReferences": ["A.9.1.2"] },
+    { "testKey": "salesforce.connected_app.admin_approval_required", "title": "Connected Apps require admin pre-authorization", "severityDefault": "high", "isoReferences": ["A.9.2.2"] },
+
+    { "testKey": "salesforce.audit.setup_audit_trail_retention", "title": "Setup Audit Trail history is available for the required retention window", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "salesforce.audit.login_history_available", "title": "Login History is retained and queryable", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+
+    { "testKey": "salesforce.network.trusted_ip_ranges_configured", "title": "Login IP restrictions or trusted ranges are configured", "severityDefault": "medium", "isoReferences": ["A.13.1.1"] },
+
+    { "testKey": "salesforce.permissionset.sensitive_permissions_reviewed", "title": "Sensitive system permissions are limited to a reviewed set of assignees", "severityDefault": "high", "isoReferences": ["A.9.2.3"] }
+  ]
+}

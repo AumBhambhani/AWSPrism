@@ -1,0 +1,29 @@
+{
+  "framework": "GDPR",
+  "frameworkName": "GDPR",
+  "source": "Article numbers and titles verified live against eur-lex.europa.eu (CELEX 32016R0679) while authoring; see README.md.",
+  "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679",
+  "provisions": [
+    { "id": "Art. 5", "title": "Principles relating to processing of personal data (lawfulness, minimisation, accuracy, storage limitation)", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 6", "title": "Lawfulness of processing", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 7", "title": "Conditions for consent", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 9", "title": "Processing of special categories of personal data", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 12", "title": "Transparent information, communication and modalities for exercising data-subject rights", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 13", "title": "Information to be provided where personal data are collected from the data subject", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 14", "title": "Information to be provided where personal data have not been obtained from the data subject", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 15", "title": "Right of access by the data subject", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 16", "title": "Right to rectification", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 17", "title": "Right to erasure ('right to be forgotten')", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 20", "title": "Right to data portability", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 25", "title": "Data protection by design and by default", "penalty": "Up to €10M or 2% of global annual turnover" },
+    { "id": "Art. 28", "title": "Processor — obligations when engaging a data processor", "penalty": "Up to €10M or 2% of global annual turnover" },
+    { "id": "Art. 32", "title": "Security of processing", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 33", "title": "Notification of a personal data breach to the supervisory authority", "penalty": "Up to €10M or 2% of global annual turnover" },
+    { "id": "Art. 34", "title": "Communication of a personal data breach to the data subject", "penalty": "Up to €10M or 2% of global annual turnover" },
+    { "id": "Art. 35", "title": "Data protection impact assessment", "penalty": "Up to €10M or 2% of global annual turnover" },
+    { "id": "Art. 37", "title": "Designation of the data protection officer", "penalty": "Up to €10M or 2% of global annual turnover" },
+    { "id": "Art. 44-49", "title": "Transfers of personal data to third countries or international organisations", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 77", "title": "Right to lodge a complaint with a supervisory authority", "penalty": "Up to €20M or 4% of global annual turnover" },
+    { "id": "Art. 83", "title": "General conditions for imposing administrative fines", "penalty": null }
+  ]
+}

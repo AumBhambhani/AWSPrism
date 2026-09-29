@@ -1,0 +1,18 @@
+{
+  "key": "google_workspace",
+  "title": "Google Workspace",
+  "category": "identity",
+  "authTypes": ["oauth2"],
+  "tests": [
+    { "testKey": "google_workspace.security.two_step_verification_enforced", "title": "2-Step Verification is enforced for all users", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "google_workspace.admin.super_admin_role_reviewed", "title": "Super admin role is assigned to a minimal, reviewed set of users", "severityDefault": "high", "isoReferences": ["A.9.2.3"] },
+    { "testKey": "google_workspace.oauth.third_party_app_risk_reviewed", "title": "Third-party OAuth app authorizations are reviewed and restricted", "severityDefault": "high", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "google_workspace.groups.privileged_group_membership_reviewed", "title": "Privileged groups have at least one owner", "severityDefault": "medium", "isoReferences": ["A.9.2.2"] },
+    { "testKey": "google_workspace.drive.external_sharing_restricted", "title": "Drive/Docs external sharing defaults are restricted", "severityDefault": "critical", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "google_workspace.gmail.auto_forwarding_restricted", "title": "Automatic email forwarding to external addresses is restricted", "severityDefault": "high", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "google_workspace.calendar.external_sharing_restricted", "title": "Calendar external sharing default is restricted", "severityDefault": "medium", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "google_workspace.devices.chrome_policy_compliant", "title": "Managed ChromeOS devices enforce baseline security policy", "severityDefault": "medium", "isoReferences": ["A.6.2.1"] },
+    { "testKey": "google_workspace.users.inactive_accounts_reviewed", "title": "Suspended or long-inactive user accounts are reviewed", "severityDefault": "medium", "isoReferences": ["A.9.2.6"] },
+    { "testKey": "google_workspace.audit.log_retention_configured", "title": "Admin and login audit logs are retained and actively flowing", "severityDefault": "high", "isoReferences": ["A.12.4.1"] }
+  ]
+}

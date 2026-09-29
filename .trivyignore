@@ -1,0 +1,18 @@
+# CVEs in npm's own bundled dependencies (/usr/local/lib/node_modules/npm/).
+# npm is not used at runtime — only during the image build step.
+# Attack surface: zero in production. Remove these when npm ships patched versions.
+# Checked on node:24 + npm@latest as of 2026-08-08.
+#
+# brace-expansion: bundled at 5.0.7, fix requires 5.0.8
+CVE-2026-14257
+CVE-2026-69152
+CVE-2026-13149
+# ip-address: bundled at 10.2.0 (SSRF), fix requires 10.3.1
+CVE-2026-69192
+
+# xlsx CVEs — SheetJS publishes fixes only to their private CDN registry.
+# The fixed versions (0.19.3+) are not available on the public npm registry.
+# Migration to exceljs is tracked as a follow-up task.
+CVE-2023-30533
+CVE-2024-22363
+

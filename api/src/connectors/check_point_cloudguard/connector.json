@@ -1,0 +1,14 @@
+{
+  "key": "check_point_cloudguard",
+  "name": "Check Point CloudGuard",
+  "category": "cloud",
+  "authType": "api_key",
+  "tests": [
+    { "testKey": "check_point_cloudguard.posture.accounts_fetching", "title": "Every onboarded cloud account is fetching configuration successfully", "severityDefault": "medium", "isoReferences": ["A.12.1.1"] },
+    { "testKey": "check_point_cloudguard.posture.assessment_recent", "title": "A compliance assessment has run for each account within the freshness window", "severityDefault": "medium", "isoReferences": ["A.18.2.2"] },
+    { "testKey": "check_point_cloudguard.posture.ruleset_assigned", "title": "Each account has a compliance ruleset bound and scheduled", "severityDefault": "medium", "isoReferences": ["A.18.2.2"] },
+    { "testKey": "check_point_cloudguard.posture.critical_findings_addressed", "title": "No critical posture findings remain open past the remediation SLA", "severityDefault": "critical", "isoReferences": ["A.12.6.1"] },
+    { "testKey": "check_point_cloudguard.posture.high_findings_within_policy", "title": "High-severity posture findings are within the policy count and age threshold", "severityDefault": "high", "isoReferences": ["A.18.2.2"] },
+    { "testKey": "check_point_cloudguard.posture.exclusions_reviewed", "title": "Posture exclusions are time-bounded and not stale", "severityDefault": "low", "isoReferences": ["A.9.4.1"] }
+  ]
+}

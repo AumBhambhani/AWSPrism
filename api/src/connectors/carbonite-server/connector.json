@@ -1,0 +1,11 @@
+{
+  "key": "carbonite-server",
+  "name": "Carbonite Server Backup",
+  "category": "backup",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "carbonite-server.backup.recent_successful_safeset", "title": "Safesets have a recent successful backup run", "severityDefault": "critical", "isoReferences": ["A.12.3.1"] },
+
+    { "testKey": "carbonite-server.monitoring.agent_online", "title": "Backup agents are online and checking in", "severityDefault": "high", "isoReferences": ["A.12.3.1", "A.12.4.1"] }
+  ]
+}

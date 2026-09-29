@@ -1,0 +1,1265 @@
+PRISM SECURITY AUDIT — CODEX PERSISTENT INSTRUCTIONS / STATUS
+
+Purpose:
+Maintain a persistent, authoritative security-audit status for the PRISM repository. This status must survive context changes and prevent completed findings from being re-audited unnecessarily or pending findings from being accidentally skipped.
+
+GENERAL RULES
+1. Treat this file/instructions as the source of truth for audit progress unless a newer explicit audit report supersedes it.
+2. Never claim a finding is fixed or closed without evidence from:
+   - regression tests,
+   - relevant broader test suites,
+   - diff/worktree inspection,
+   - and an independent closure review where required.
+3. Preserve the distinction between:
+   - VALIDATED / CONFIRMED
+   - REMEDIATION IN PROGRESS
+   - FIXED / READY FOR CLOSURE
+   - CLOSED / INDEPENDENTLY VERIFIED
+   - NOT CONFIRMED
+   - PENDING VALIDATION
+4. Do not modify unrelated pre-existing working-tree changes.
+5. For each finding, work one finding at a time:
+   VALIDATE -> RED TESTS -> FIX -> GREEN TESTS -> ALTERNATE-PATH REVIEW -> INDEPENDENT CLOSURE REVIEW.
+6. Do not silently reopen a CLOSED finding because of an unrelated observation. Create/track a separate finding unless the new issue directly defeats the closed security property.
+7. Keep exact test baselines from the relevant audit report. Do not assume one universal integration-test count.
+
+COMPLETED FINDINGS
+
+F-01 — Cross-tenant evidence takeover/file disclosure
+Severity: P1 High
+Status: CLOSED
+Key remediation:
+- Removed cross-company evidence reassignment.
+- Reject client-controlled filePath/file_path.
+- Evidence responses no longer expose raw storage paths.
+- Storage enforces company-specific namespaces for local/S3/Azure.
+Validation/closure:
+- Dedicated regression tests passed.
+- Storage/analysis tests passed.
+- Relevant integration tests passed.
+- Frontend production build passed.
+- Diff/whitespace checks clean.
+
+F-02 — Evidence filePath injection
+Severity: P2
+Status: CLOSED
+Important: Closed as a consequence of F-01 remediation, with dedicated regression coverage.
+Key result:
+- Client-supplied filePath cannot be persisted/used to read arbitrary files.
+- Storage layer enforces tenant-aware isolation.
+- Alternate mutation paths were checked.
+Residual smell in assessments.js raw unlink is delete-only and not currently exploitable; treat as separate defense-in-depth work unless future evidence changes that conclusion.
+
+F-03 — Marketplace activation cross-tenant modification
+Severity: P1 High
+Status: CLOSED
+Key remediation:
+- ADMIN-only.
+- companyId derived from req.user.companyId.
+- Client companyId ignored.
+- Existing subscription ownership checked.
+- IDs/quantity validated.
+- Local state persisted only after external activation success.
+Validation:
+- Dedicated tests and auth/RBAC tests passed.
+- Independent closure review passed.
+
+F-04 — Marketplace subscription cross-tenant disclosure
+Severity: P2
+Status: CLOSED
+Key remediation:
+- ADMIN-only.
+- Query binds subscription_id to authenticated company_id.
+- Explicit response projection.
+- Foreign/unknown subscription returns 404.
+Validation:
+- Attack matrix passed.
+- Alternate paths checked.
+- Independent closure review passed.
+
+F-05 — DPDPA scanner SSRF
+Severity: P1 High
+Status: CLOSED
+Key remediation:
+- Central safeFetch boundary.
+- Blocks private/loopback/link-local/metadata/internal destinations.
+- Manual redirects are revalidated.
+- Validated IPs are pinned.
+- Mobile scanner was also found during independent review and migrated to safeFetch.
+- Scanner-wide search found no remaining raw fetch path outside safeFetch.
+Validation:
+- Original SSRF suite passed.
+- Mobile SSRF suite passed.
+- Scanner tests passed.
+- Full unit suite passed.
+Residual low-severity IPv6 special-purpose classification gap was noted separately and did not reopen F-05.
+
+F-06 — Tenant ADMIN/LEAD mutation of global canonical questions
+Severity: P2 High
+Status: CLOSED
+Key remediation:
+- Tenant override is created when no tenant-specific copy exists.
+- All subsequent writes target authenticated tenant company_id.
+- Global canonical rows cannot be modified by tenant ADMIN/LEAD routes.
+- Concurrency protected by unique (company_id, quest_id) index + ON CONFLICT.
+- SUPERADMIN global catalog mutation path remains intact.
+Validation:
+- 14/14 F-06 regression tests passed.
+- Unit 971/971.
+- Integration baseline preserved with 8 pre-existing unrelated failures.
+- Independent closure review passed.
+Additional separate correctness fix:
+- GET /api/questions/:questId now uses ORDER BY company_id ASC NULLS LAST LIMIT 1.
+- Added 2 regression tests for tenant override preference and global fallback.
+- Final unit 971/971.
+- Final integration 264/272 with same 8 pre-existing unrelated failures.
+- This does not reopen F-06.
+
+F-07 — Assessment authorization / field-level privilege escalation
+Severity: P1 High
+Status: CLOSED
+Key remediation:
+- PUT /api/assessments/:id uses a hard allowlist and role-specific field/state permissions.
+- Contributor cannot self-approve.
+- Auditor cannot rewrite assessment content.
+- reviewedBy/auditedBy are derived from authenticated identity.
+- scoreEligible is server-derived.
+- POST /api/assessments was separately discovered as a sibling bypass and was fixed as part of the F-07 remediation.
+- POST rejects/controls forged approval/audit states and derives score eligibility server-side.
+Validation:
+- Combined POST/PUT regression suite 31/31 passed.
+- Unit 971/971.
+- Integration baseline remained unchanged.
+- Independent closure review passed.
+Important: F-08 is considered the POST/create attack path of F-07, not a separate duplicate vulnerability.
+
+F-08 — Assessment creation permits forged reviewer/auditor attribution
+Severity: P2 in original report
+Status: MERGED INTO F-07 / CLOSED
+Reason:
+- Independent review established that F-08 is the POST/create sibling attack path for the same assessment authorization weakness.
+- It was fixed and independently verified through F-07's combined remediation.
+Do not reopen or count F-08 separately unless genuinely new behavior outside the F-07 security property is discovered.
+
+PENDING FINDINGS
+
+F-09 — Evidence requests can reference users and records from other tenants
+Severity: P1 High (ORIGINAL; must be independently reassessed)
+Status: NEXT / PENDING VALIDATION
+Suspected routes:
+- POST /api/requests
+- PUT /api/requests/:id
+Areas:
+- assessmentId
+- artifactGroupId
+- assigneeId
+- company_id consistency
+- request listing/detail
+- email/notification behavior
+- downstream evidence upload/attachment behavior
+Important:
+- Do NOT assume the finding is exploitable.
+- Validate the complete chain with two tenants.
+- Determine actual disclosure, notification, integrity, and downstream impact.
+- Reassess severity after empirical proof.
+- Do not modify files during validation.
+
+F-09 STATUS UPDATE — 2026-09-24
+Previous status: NEXT / PENDING VALIDATION
+New status: FIXED / READY FOR CLOSURE (original exploit NOT CONFIRMED on HEAD 3ec164b)
+Reassessed severity: original P1 attack not reproducible; residual = P3 defense-in-depth.
+What was proven (two-tenant proof, 19 live-path attack cases, all blocked on unmodified HEAD;
+  2 further legacy-row cases RED — see below):
+- Already remediated by commit a875b31 ("PRISM-002"): validateReferences() scopes
+  assessmentId / questionId (tenant or global) / assigneeId to req.user.companyId and
+  strictly validates numeric IDs; PUT only accepts assigneeId as a reference and it is
+  validated; company_id/assessment_id/question_id in a PUT body are ignored.
+- list/detail/comments/fulfil/cancel all bind er.company_id; fulfil validates the vault
+  item's company; assignee notification emails query users by (id, company_id).
+- artifact_group_id has no backing table anywhere in schema/app — it is an inert integer
+  (numeric-validated), so there is no foreign record to reference.
+- RED (2 cases): BASE_SELECT joined users (assignee) and evidence_vault (fulfilled) with
+  no tenant predicate, so a legacy row created before a875b31 with a foreign assignee or
+  foreign fulfilled_evidence_id would disclose that user's name/email or the foreign
+  vault item's title/file name. Local dev DB (compliance) has 0 such rows; production
+  data NOT checked — run the audit query below against prod before full closure.
+Fix (defense-in-depth):
+- BASE_SELECT: LEFT JOIN users au ... AND au.company_id = er.company_id;
+  LEFT JOIN evidence_vault ev ... AND ev.company_id = er.company_id.
+- fulfil requester-notification lookup now binds users.company_id = cid.
+Files changed:
+- api/src/routes/requests.js (3 lines)
+- api/src/__tests__/integration/f09EvidenceRequestTenantBoundary.test.js (new, 21 tests)
+Regression: F-09 suite 21/21 + securityHardening 7/7 = 28/28 GREEN (2 RED before fix).
+  [Corrected 2026-09-24: an earlier revision of this entry said 25 + 3.]
+Unit: 1733 passed / 7 skipped (167 files).
+Integration: ran targeted files only (f09, securityHardening, dashboardManagement, vault)
+  — all green. Full integration suite NOT run locally (Docker inode exhaustion risk).
+Alternate paths: evidence_requests is only written by routes/requests.js; dashboard.js
+  reads it with company_id-scoped counts only.
+Prod data audit query:
+  SELECT er.id FROM evidence_requests er
+  LEFT JOIN users u ON u.id = er.assignee_id
+  LEFT JOIN evidence_vault v ON v.id = er.fulfilled_evidence_id
+  LEFT JOIN assessments a ON a.id = er.assessment_id
+  WHERE u.company_id <> er.company_id OR v.company_id <> er.company_id
+     OR a.company_id <> er.company_id;
+Independent closure review: NOT YET DONE.
+
+F-10 — Vault PIN bypass for linked evidence metadata and AI results
+Original severity: P2
+Status: PENDING VALIDATION
+Suspected route:
+- GET /api/vault/quest-links
+Concern:
+- Route may omit requireVaultPin while returning linked evidence metadata and AI analysis information.
+Must validate actual authorization model, PIN semantics, tenant isolation, and whether returned information is intended to be visible without the PIN.
+
+F-10 STATUS UPDATE — 2026-09-24
+Previous status: PENDING VALIDATION
+New status: FIXED / READY FOR CLOSURE (CONFIRMED)
+Severity: P3 (same-tenant, authenticated VAULT_READERS only; bypass of the vault PIN second
+  factor for metadata + AI analysis; file bytes view/download were always PIN-gated).
+What was proven (RED on HEAD 3ec164b, 6 cases):
+- LEAD / CONTRIBUTOR / REVIEWER (and AUDITOR at the time) with a PIN set and no
+  X-Vault-Token got 200 from GET /api/vault/quest-links with title, description,
+  evidence_link, file name and ai_* analysis, while the equivalent PIN-gated
+  GET /api/vault?questId= refused the same caller (parity test).
+- A vault token minted for another user was irrelevant (route never checked it).
+- Join evidence_vault ev ON ev.id = qe.vault_id had no tenant predicate: a legacy
+  question_evidence row pointing at a foreign vault id disclosed the foreign item.
+  (All 6 current question_evidence writers bind the vault item to the caller's company,
+  so no live path creates such a row.)
+Product decision (user, 2026-09-24):
+- No PIN set -> everything visible as before. PIN set -> ask for the PIN.
+- AUDITOR must NOT be asked for the PIN (same as ADMIN). Applied to requireVaultPin
+  globally (PIN_EXEMPT_ROLES = ADMIN, AUDITOR), not just quest-links.
+Fix:
+- api/src/routes/vault.js: quest-links now uses requireVaultPin; join scoped with
+  ev.company_id = qe.company_id; PIN_EXEMPT_ROLES = ["ADMIN","AUDITOR"].
+- Frontend: vault token is kept in sessionStorage (web/src/utils/vaultSession.js) and
+  apiFetch/apiUpload auto-attach X-Vault-Token on /api/vault* calls; errors now carry
+  .status/.code. New VaultPinPrompt.jsx shown inline on Review and QuestionDetail when the
+  API answers VAULT_PIN_REQUIRED (previously they silently hid vault evidence). Unlocking
+  once works across pages. EvidenceVault shares the same session, exempts AUDITOR, and its
+  lock check now uses the error code (the old message-based check could never match).
+  Findings/QuestionDetail raw download fetches send the vault token.
+Files changed: api/src/routes/vault.js, web/src/api/client.js, web/src/pages/{EvidenceVault,
+  Review,QuestionDetail,Findings}.jsx, web/src/components/VaultPinPrompt.jsx (new),
+  web/src/utils/vaultSession.js (new),
+  api/src/__tests__/integration/f10VaultQuestLinksPin.test.js (new, 13 tests).
+Regression: F-10 13/13; with vault.test.js, F-09 and securityHardening 55/55 GREEN.
+Unit: 1733 passed / 7 skipped. Web production build passes.
+Browser verification (local docker, company 1, test PIN set then removed): PIN set + no
+  session -> Review shows the PIN prompt; correct PIN -> vault evidence appears; no PIN ->
+  evidence shows with no prompt; after AUDITOR exemption -> auditor sees evidence with
+  PIN set and no prompt.
+Independent closure review: NOT YET DONE.
+
+F-15 (NEW, discovered during F-10) — AUDITOR can download vault files despite the policy
+Severity: P3 (PENDING VALIDATION / not yet fixed)
+- requireReadOnly() always appends "AUDITOR" to its allowed roles, so
+  VAULT_DOWNLOADERS = [ADMIN, LEAD, CONTRIBUTOR, REVIEWER] does not exclude auditors on
+  GET /api/vault/:id/download and /:id/versions/:vid/download, contrary to the route
+  comment "auditors can view but not download". Observed: auditor got 404 (file missing),
+  not 403, i.e. authorization passed. Separate from F-10; needs product confirmation
+  (now more relevant because auditors are PIN-exempt).
+
+F-15 STATUS UPDATE — 2026-09-24
+Previous status: PENDING VALIDATION
+New status: FIXED / READY FOR CLOSURE (CONFIRMED)
+Severity: P3 (same-tenant AUDITOR could download raw evidence files against policy).
+Product decision (user): auditors can view, not download.
+What was proven (RED, 3 cases, with real uploaded files): AUDITOR received the file bytes
+  (200 attachment) from GET /api/vault/:id/download, /api/vault/:id/versions/:vid/download
+  and passed authorization on GET /api/evidence/:id/download. Root cause: requireReadOnly()
+  always appends AUDITOR, so VAULT_DOWNLOADERS / the evidence role list never excluded it.
+Fix:
+- api/src/routes/vault.js: both download routes use requireRole(VAULT_DOWNLOADERS).
+- api/src/routes/evidence.js: download uses requireRole(["ADMIN","LEAD","CONTRIBUTOR"])
+  (REVIEWER was never permitted there; unchanged).
+- /view (inline) routes unchanged — auditors keep view access.
+- Frontend: auditors see "View" (opens inline via /view in a new tab) instead of
+  "Download" on Review, QuestionDetail (vault + legacy evidence) and Findings; the
+  EvidenceVault image preview now uses /view so it works for auditors. EvidenceVault list /
+  version buttons already respected canDownload.
+Files: api/src/routes/{vault,evidence}.js, web/src/pages/{Review,QuestionDetail,Findings,
+  EvidenceVault}.jsx, api/src/__tests__/integration/f15AuditorNoDownload.test.js (new, 5).
+Regression: F-15 5/5 (3 RED before fix); combined targeted run (f15, f10, f09, vault,
+  evidenceTenantBoundary, evidenceFilePathInjection, securityHardening) 83/83 GREEN.
+Unit: 1733 passed / 7 skipped. Web build passes.
+Live check (local docker, auditor@demo.com, company 1): /api/vault/1/view 200,
+  /api/vault/1/download 403; QuestionDetail shows "View", click -> /view 200.
+Not in scope / noted: user can still save an inline-viewed file from the browser — the
+  control is server-side attachment denial + UI, not DRM. Generated reports (finding PDF
+  report, exports) were not changed.
+Independent closure review: NOT YET DONE.
+
+F-11 — Reviewed evidence can potentially be replaced through mutable vault pointers
+Original severity: P2
+Status: PENDING VALIDATION
+Concern:
+- Approved/reviewed assessment evidence may reference a mutable current vault version rather than an immutable approved_evidence_version_id.
+Must prove whether a reviewed evidence state can actually be changed after approval and whether downstream reports/audits consume the mutable pointer.
+
+F-11 STATUS UPDATE — 2026-09-24
+Previous status: PENDING VALIDATION
+New status: FIXED / READY FOR CLOSURE (CONFIRMED)
+Severity: P2 (integrity — approved/audited sign-off silently covered content nobody reviewed).
+What was proven (RED on HEAD, 4 cases): with a linked control FINISHED or AUDITED, a
+  CONTRIBUTOR could POST /api/vault/:id/versions (201), POST .../versions/:vid/restore (201)
+  and PUT /api/vault/:id (200). evidence_vault.storage_path is the mutable "current" pointer
+  that /view, /download, reviewers, auditors and AI analysis all read; approval stored no
+  version reference and was left FINISHED/AUDITED. Sibling path found during alternate-path
+  review: POST /api/evidence (Tracker upload with questId) silently versions the question's
+  existing linked vault item — same swap. Delete and unlink were already locked.
+Product decision (user, 2026-09-24): FINISHED -> allow the change and reopen review;
+  AUDITED -> lock it down.
+Fix:
+- New api/src/utils/approvedEvidence.js. "Approved" = the current effective (carry-forward)
+  assessment via findApprovedAssessmentsForVaultItem (same logic as the dashboard and
+  connector drift detection), now exported from collectionRunner.js together with
+  revertApprovedAssessmentsForVaultItem.
+- AUDITED linked control -> 409 { code: "LOCKED" } on new version, restore, rename/
+  description edit, and Tracker re-upload (checked before any file is stored or any
+  evidence row is inserted).
+- FINISHED linked control -> change proceeds, then the control is reverted to Submitted
+  with auto_reverted_at/auto_reverted_reason (existing "⚠ Auto-reverted" badge on Review),
+  an ASSESSMENT_AUTO_REVERTED audit-log entry, email to the reviewer, and an in-app
+  "re-review needed" notification to ADMIN/LEAD.
+- GET /api/vault/:id returns approvalState ("audited" | "approved" | null). EvidenceVault
+  shows a red lock banner and hides Upload New Version / Restore when audited; shows an
+  amber notice and asks for confirmation before new version / restore / edit when approved.
+- Automated connector re-collection is unchanged (it already reverts FINISHED and AUDITED
+  approvals when evidence content drifts — collectionRunner.js).
+Files: api/src/utils/approvedEvidence.js (new), api/src/utils/collectionRunner.js (2
+  exports), api/src/routes/vault.js, api/src/routes/evidence.js, web/src/pages/
+  EvidenceVault.jsx, api/src/__tests__/integration/f11ReviewedEvidenceImmutable.test.js
+  (new, 9 tests).
+Regression: F-11 9/9. Combined targeted run (f09, f10, f11, f15, vault, evidenceTenant
+  Boundary, evidenceFilePathInjection, securityHardening, collectionRunner,
+  assessmentUpdateAuthorization, dashboardCarryForward) 137/137 GREEN.
+Unit: 1733 passed / 7 skipped. Web build passes.
+Browser (local company 1, admin): audited item Cloud_Security_Policy.docx -> red lock
+  banner, no Upload New Version / Restore; FINISHED item Information Security Policy ->
+  amber re-review notice, Upload New Version available. No local data was modified.
+Known limitations: previous periods' approvals are not pinned to a version (the version
+  history is retained, so the approved file remains recoverable); the delete/unlink lock
+  still uses the older "any FINISHED/AUDITED assessment for the quest" rule, unchanged.
+Independent closure review: NOT YET DONE.
+
+F-12 — Malware scanning fails open on scanner errors
+Original severity: P2
+Status: PENDING VALIDATION
+Concern:
+- ClamAV unconfigured/unavailable/error may cause uploads to be accepted after only magic-byte validation.
+Must verify actual production upload behavior, scanner failure handling, configuration assumptions, and whether this is a deliberate accepted policy or a security defect.
+
+F-12 STATUS UPDATE — 2026-09-24
+Previous status: PENDING VALIDATION
+New status: FIXED / READY FOR CLOSURE (CONFIRMED)
+Severity: P2 (malware accepted unscanned during any ClamAV outage).
+What was proven (RED, 3 unit cases): the fail-open was deliberate (code comment) but
+  defective: with CLAMAV_HOST set, (1) a scan error/timeout returned { safe: true };
+  (2) an unreachable clamd at first use returned safe; (3) that init failure latched
+  _clamInitFailed permanently, disabling scanning for the process lifetime even after
+  ClamAV recovered. docker-compose gates API start on clamav health, so the startup race
+  is covered, but any runtime clamd restart/outage silently accepted everything.
+Product decision (user, 2026-09-24): hold uploads in temporary storage and only truly
+  upload them once a scan completes.
+Fix:
+- scanFile.js: new "unavailable" result { safe:false, unavailable:true }; scan errors and
+  unreachable clamd never fail open; no permanent latch (10s reconnect back-off,
+  CLAMAV_RETRY_MS); client reset after a scan error. Unconfigured (no CLAMAV_HOST, dev/
+  tests) still accepts, with a one-time warning.
+- Quarantine: new upload_quarantine table (init.sql); bytes saved under a separate
+  "quarantine" storage scope (local/S3/Azure) referenced only by that table — no vault,
+  evidence, link, request, approval or AI row exists until release. Routes answer
+  202 { status: "pending_scan", quarantineId, message }.
+- utils/evidenceUploads.js: the post-scan halves of POST /api/vault, POST /api/vault/:id/
+  versions and POST /api/evidence extracted verbatim into finalizers shared by the routes
+  and the worker (F-11 audited lock + FINISHED reopen apply at release time too).
+- utils/uploadQuarantine.js + scheduler (30s after boot, then every 5 min): claims rows
+  (pending -> processing, SKIP LOCKED, stale-claim recovery), rescans; clean -> finalize,
+  delete held copy, notify uploader; infected -> delete + notify; still unscannable after
+  24h (UPLOAD_QUARANTINE_TTL_HOURS) -> expire + notify; target audited meanwhile ->
+  rejected + notify. Nothing is released when no scanner is configured. Audit log entries
+  for quarantine/release/infected/expired/rejected.
+- Evidence requests: fulfil logic extracted to utils/evidenceRequestFulfil.js (route
+  unchanged in behaviour). Upload with fulfilRequestId is permission-checked up front and
+  auto-fulfils the request on release.
+- GET /api/vault/quarantine lists held uploads (contributors: own; ADMIN/LEAD: company).
+- Frontend: web/src/utils/uploadScan.js; pending message + held-files banner on
+  EvidenceVault (upload + new version), QuestionDetail, QuestionCard (Tracker),
+  EvidenceRequests (fulfil-by-upload), PolicyOnboarding.
+Files: api/src/utils/{scanFile,evidenceStorage,scheduler}.js, api/src/utils/{evidenceUploads,
+  uploadQuarantine,evidenceRequestFulfil}.js (new), api/src/routes/{vault,evidence,requests}.js,
+  init.sql, api/src/__tests__/setup/helpers.js (truncate), web: 6 pages/components + util,
+  tests: api/src/__tests__/f12MalwareScanFailClosed.test.js (6),
+  api/src/__tests__/integration/f12UploadQuarantine.test.js (17).
+Regression: F-12 unit 6/6 (3 RED before), F-12 integration 17/17; targeted run of 14
+  integration files (f09-f15, vault, evidence tenant/filePath, securityHardening,
+  collectionRunner, assessment create/update auth, carry-forward, storage settings)
+  178/178 GREEN. Unit 1738 passed / 7 skipped; 1 unrelated flaky failure in
+  connectorsPurviewDatamap.test.js (passes 2/3 reruns, no connector code touched).
+Live E2E (local docker, real ClamAV): scanner up + EICAR -> 400 Malware detected;
+  clamav stopped -> clean + EICAR both 202, held under uploads/1/quarantine, 0 vault rows,
+  vault UI banner "2 uploads waiting for a malware scan"; clamav restarted + rescan ->
+  clean released (vault item created, AI queued), EICAR "infected" and deleted, uploader
+  notified; quarantine folder empty afterwards. Test data removed. NOTE: the local stack
+  sent 2 real notification emails to ab@neozaar.com and ran 1 Bedrock analysis during
+  this run.
+Known limitations / follow-ups:
+- Schema: dev DB got the table via the init.sql fragment; other environments get it on
+  the next db-init run (idempotent CREATE ... IF NOT EXISTS).
+- PolicyOnboarding: a quarantined policy is not auto-analysed on release (user is told).
+- F-16 (NEW): logo uploads (settings.js, superadmin.js) and spreadsheet imports
+  (frameworks.js, superadmin import-modules/preview-import) are not malware-scanned at all.
+Independent closure review: NOT YET DONE.
+
+F-13 — Password-reset token replay / existing sessions survive password reset
+Original severity: P2
+Status: PENDING VALIDATION
+Suspected:
+- OTP creates short-lived reset JWT.
+- Reset token may remain reusable until expiry.
+- Existing seven-day access JWTs may remain valid after password reset.
+Must empirically test token replay and post-reset session validity without weakening production auth.
+
+F-13 STATUS UPDATE — 2026-09-24
+Previous status: PENDING VALIDATION
+New status: FIXED / READY FOR CLOSURE (CONFIRMED)
+Severity: P2 (account-takeover persistence: a reset does not evict an attacker's sessions).
+What was proven (RED, 4 cases, OTP captured from mocked email):
+- Reset token replay: the same 5-minute reset token set a second password (200).
+- Sessions survive reset: a 7-day session issued before the reset still passed
+  authenticate afterwards (no password-change/version check anywhere).
+- NEW (found during validation): the reset token is signed with JWT_SECRET and carries
+  userId, and authenticate() never checked `purpose` — so the reset token itself worked
+  as a login session (GET /api/auth/me 200).
+- An older reset token still worked after a newer reset completed.
+- reset-password is the only password writer for users (no change-password route, no
+  server-side logout); super_admins have no reset flow.
+Fix:
+- users.token_version INT NOT NULL DEFAULT 0 (init.sql). Session JWTs (login, register,
+  invite-accept) carry `tv`; authenticate() rejects `tv` mismatch with 401
+  SESSION_REVOKED. Tokens without `tv` (pre-existing sessions) count as version 0, so no
+  one is logged out by the deploy itself.
+- authenticate() rejects any token carrying `purpose` (SESSION_INVALID).
+- Reset tokens signed with a separate key (JWT_SECRET + ":password-reset") and bound to
+  `tv`; reset-password does UPDATE ... SET token_version = token_version + 1 ... WHERE
+  id = $2 AND token_version = $3 — atomic single use, kills all older reset tokens and all
+  sessions; also clears reset_otp fields.
+- Session-death 401s from authenticate carry code SESSION_INVALID / SESSION_REVOKED
+  (the no-Authorization-header 401 body is unchanged — F-04 test asserts it exactly).
+- Frontend: apiFetch dispatches auth:session-expired only for those codes (a wrong vault
+  PIN or delete-company password 401 does not sign out); App shows a "Signed out" dialog
+  with "Log in again". This also fixes the pre-existing behaviour where an expired 7-day
+  token left the user stuck on error messages.
+Files: init.sql, api/src/routes/auth.js, api/src/middleware/auth.js, web/src/api/client.js,
+  web/src/App.jsx, api/src/__tests__/integration/f13PasswordResetSessions.test.js (new, 7).
+Regression: F-13 7/7 (4 RED before). auth, users, securityHardening, marketplace x2 (F-03/
+  F-04), f10, settings, superadminAiProvider: all green (37/37 on final rerun of the
+  auth-touching set; 82/83 before restoring the F-04 exact 401 body). Unit 1739 passed /
+  7 skipped. Web build passes.
+Live (local docker, throwaway user created directly in DB with a planted OTP hash so no
+  email was sent; deleted afterwards): old session 200 -> reset token as session 401 ->
+  reset 200 -> replay 400 -> old session 401 SESSION_REVOKED -> replayed password login
+  401 -> new login 200. Browser with the revoked token: "Signed out" dialog -> Log in
+  again -> /login with storage cleared. 0 emails sent.
+Known limitations:
+- Vault PIN tokens (8h) are not versioned, but every vault route runs authenticate first,
+  so they are useless once the session is revoked.
+- consent.js links anonymous consent logs using a raw jwt.verify (no tv/purpose check);
+  impact is limited to attributing consent rows, noted for follow-up.
+- Rollout: dev DB got the column via ALTER; other environments on next db-init run.
+Independent closure review: NOT YET DONE.
+
+F-14 — Global/tenant question selection nondeterministic
+Original severity: P2
+Status: PARTIALLY ADDRESSED / RECHECK NEEDED
+Important:
+- The originally flagged single-question GET ambiguity was separately fixed with ORDER BY company_id ASC NULLS LAST LIMIT 1 and regression tests.
+- Before treating F-14 as closed, inspect the full original F-14 scope, including modules.js and any other read paths, because the original finding covered both questions and modules.
+- Do not assume the question fix closes the entire F-14 finding.
+
+F-14 STATUS UPDATE — 2026-09-24
+Previous status: PARTIALLY ADDRESSED / RECHECK NEEDED
+New status: FIXED / READY FOR CLOSURE (CONFIRMED — full scope)
+Severity: P3 overall (correctness / UI integrity); the evidence-analyze sub-issue is a
+  low-grade cross-tenant data exposure (another tenant's question text fed into the
+  caller's AI prompt).
+Scope swept: every query mixing company_id = X with company_id IS NULL, and every JOIN to
+  questions/modules lacking a company predicate. Already correct: GET /api/questions/
+  :questId (prior fix), vault/requests/evidenceAnalysis LATERAL lookups, questions.js and
+  superadmin.js dependency CTEs (DISTINCT ON), existence checks (LIMIT 1).
+What was proven (RED, 8 cases; data = global + tenant copies of the same ids, as created
+  by framework-import commits + F-06 tenant overrides):
+- GET /api/questions (+ ?moduleId): archived_at was filtered BEFORE DISTINCT ON, so a
+  tenant that archived its override got the global row back.
+- GET /api/modules: module listed twice (global + tenant) — no de-duplication.
+- GET /api/modules/:moduleId: mapRow took an arbitrary row (returned the GLOBAL name) and
+  the question list contained both global and tenant copies.
+- GET /api/modules/:moduleId/dependencies: each dependency listed twice.
+- GET /api/dashboard moduleCompletion (4 SQL variants): module listed twice.
+- modules list blocked_by_deps: counted questions from both copies.
+- POST /api/evidence/:id/analyze: LEFT JOIN questions ON quest_id only — joined every
+  tenant's copy; RED test showed the AI call received another tenant's
+  required_evidence. Locally 369 quest_ids are shared by 2 tenants.
+- Also noted: modules has no partial unique index for global rows (NULLs distinct), so
+  duplicate global module_ids are possible; resolved by an `id ASC` tie-break.
+Fix:
+- New api/src/db/effectiveRows.js: effectiveQuestions/effectiveModules = DISTINCT ON id,
+  tenant row first, then global, then id ASC. Archive filtering happens after selection.
+- Applied in routes/questions.js (list), routes/modules.js (list, blocked_by_deps,
+  detail + its questions, dependencies), routes/dashboard.js (4 moduleCompletion
+  variants); evidence analyze uses a tenant-first LATERAL lookup.
+Files: api/src/db/effectiveRows.js (new), api/src/routes/{questions,modules,dashboard,
+  evidence}.js, tests: api/src/__tests__/integration/f14GlobalTenantPrecedence.test.js (7),
+  api/src/__tests__/integration/f14EvidenceAnalyzeQuestionScope.test.js (1).
+Regression: F-14 8/8 (all RED before; analyze RED verified by reverting only that hunk).
+  dashboardCarryForward, dashboardAutomatedCoverage, dashboardManagement, f06,
+  questionGetTenantOverridePriority, frameworkImport, selfAssessmentSeed,
+  testDefinitionSync: 58/58. Evidence/vault suites incl. f11/f12: 71/71.
+  Unit 1739 passed / 7 skipped.
+Not changed / follow-ups:
+- A partial unique index modules(module_id) WHERE company_id IS NULL was NOT added: on
+  an environment that already has duplicate global modules it would make db-init fail
+  (ON_ERROR_STOP) and block API start. Add after checking prod data.
+- dashboard total_quests counts only tenant-owned questions (company_id = $1), ignoring
+  global-only questions — a separate consistency question, not a precedence bug.
+Independent closure review: NOT YET DONE.
+
+REMAINING ORIGINAL FINDINGS AFTER F-14
+The original audit may contain additional findings beyond F-14. Before skipping them, consult the authoritative audit report/status and enumerate every remaining finding number and title. Never invent missing findings.
+
+AUDIT PROCESS FOR EVERY PENDING FINDING
+
+Phase 1 — Validation
+- Read the relevant route/helper/schema/database code.
+- Trace authentication, authorization, tenant scoping, input validation, DB writes/reads, downstream effects.
+- Search repo-wide for alternate paths.
+- Build a minimal isolated proof.
+- Add regression tests only after understanding the vulnerable behavior.
+- Run them against the vulnerable implementation and record RED results.
+- Run relevant existing tests and record the baseline.
+- Do NOT fix production code during validation.
+
+Phase 2 — Remediation
+Only after confirmation:
+- Propose the smallest safe fix.
+- Preserve legitimate frontend/API behavior.
+- Implement regression tests for every confirmed attack path.
+- Avoid touching unrelated files or pre-existing dirty worktree changes.
+
+Phase 3 — Verification
+- Run dedicated regression suite.
+- Run relevant existing targeted suites.
+- Run full unit suite.
+- Run integration suite and compare exact failures to baseline.
+- Search for alternate mutation/read paths.
+- Inspect git diff.
+- Confirm no unrelated files were changed.
+
+Phase 4 — Independent Closure Review
+A separate review must challenge the fix:
+- Reproduce original exploit attempts.
+- Search for sibling/alternate routes.
+- Test tenant boundaries and role boundaries.
+- Verify downstream side effects.
+- Confirm frontend compatibility.
+- Confirm no test was weakened.
+- Only then mark CLOSED.
+
+CURRENT QUEUE
+
+1. F-09 — NEXT
+2. F-10
+3. F-11
+4. F-12
+5. F-13
+6. F-14 full-scope recheck
+7. Enumerate any F-15+ findings from the original audit and continue in order.
+
+STATUS UPDATE RULE
+
+At the end of every audit/remediation/closure task, update this status with:
+- Finding ID
+- Previous status
+- New status
+- Severity
+- What was proven
+- Files changed
+- Regression test count/result
+- Unit test baseline/result
+- Integration baseline/result
+- Remaining known issues
+- Whether independent closure review is complete
+
+Never delete historical completed findings. Append/update status rather than replacing history.
+
+If a finding is merged into another finding, explicitly record the merge and why.
+
+The goal is to maintain an accurate, auditable security-review ledger, not merely a list of TODOs.
+
+INDEPENDENT CLOSURE REVIEW — 2026-09-24
+Method: three independent reviewer agents (did not write the fixes), each with its own
+isolated test database (prism_review_a/b/c) and probe tests, adversarial brief per
+finding (reproduce exploits, sibling-path sweep, tenant/role boundaries, downstream
+effects, frontend compatibility, no weakened tests). No reviewer modified production
+code, existing tests, the ledger, the dev DB or containers. All reviewers confirmed the
+only change to a pre-existing test file is helpers.js adding upload_quarantine to the
+truncate list, and that the F-04 exact-401 assertion is intact.
+
+F-13 — CLOSED / INDEPENDENTLY VERIFIED (reviewer C). Held: 5-way parallel reset race
+  (exactly one 200, token_version=1), older reset token, reset token as session on 9
+  routes incl. consent/link, session as reset token, tv-less tokens (accepted before a
+  reset, revoked after), string tv, superadmin sessions, all jwt.sign sites, legit 401s
+  never sign out. New Low (separate): seedSuperAdmin.js:25 rotates the superadmin
+  password on boot without revoking superadmin sessions.
+
+F-15 — CLOSED / INDEPENDENTLY VERIFIED (reviewer B). Auditor 403 on vault/version/legacy
+  download incl. path variants; 200 inline on /view; the only other attachment route is
+  the superadmin DOCX export; frontend buttons switch to View. Pre-existing UX note:
+  REVIEWER sees a legacy-evidence Download button that 403s.
+
+F-09 — REOPENED by reviewer A, then FIXED again (READY FOR CLOSURE).
+  Reviewer RED: dashboard.js "requests by assignee" (JOIN users u ON u.id =
+  er.assignee_id, no tenant predicate) disclosed a legacy row's foreign assignee name to
+  ADMIN/LEAD/CONTRIBUTOR/REVIEWER. The earlier ledger claim that dashboard.js only reads
+  company-scoped counts was wrong. Fix: AND u.company_id = er.company_id. Regression:
+  2 dashboard cases added to f09 suite (now 23). Fulfil refactor confirmed
+  behaviour-preserving (only change: junk vaultId 400 instead of 500).
+F-14 — REOPENED by reviewer A, then FIXED again (READY FOR CLOSURE).
+  Reviewer RED (3): assessments.js POST (gap action) and PUT reviewStatus=WIP looked up
+  questions by quest_id with no company predicate, copying another tenant's
+  control_area/baseline_question/default_owner into the caller's actions; POST accepted a
+  questId visible only to another tenant. Fix: tenant-first QUESTION_CONTEXT_SQL for both
+  lookups; POST /api/assessments rejects a questId the company cannot see (400).
+  Regression: f14AssessmentQuestionScope.test.js (3). Affected suites (assessment
+  create/update auth, actions, findings, dashboards, f09, f14) 103/103.
+  Minor (not changed): GET /api/questions/:questId returns an archived tenant override
+  while the list hides it.
+F-12 — REOPENED by reviewer C, then FIXED again (READY FOR CLOSURE).
+  Reviewer RED (real clamscan v2.4.0 vs a fake clamd): clamscan resolves
+  isInfected: null (no throw) on an empty reply (clamd restarted mid-scan) or
+  "COMMAND READ TIMED OUT"; clamScan() treated null as clean -> 201 at upload, and the
+  worker RELEASED a quarantined EICAR file. Fix: only isInfected === false is clean;
+  anything else = unavailable (client reset). Regression: f12ClamdNoVerdict.test.js
+  (4, real clamscan + fake clamd; 2 RED on the old logic, verified by reverting).
+  Also fixed the reviewer's Low worker issues: new 'finalizing' state (never auto-retried,
+  so a crash mid-release cannot double-release; stuck rows logged); held uploads expire
+  after the TTL even with no scanner configured or on persistent processing errors
+  (e.g. storage backend switched); release re-checks the uploader is still
+  ADMIN/LEAD/CONTRIBUTOR and the company is not rejected/suspended. init.sql keeps the
+  status CHECK current via DROP/ADD CONSTRAINT (applied to dev + test DBs).
+  f12UploadQuarantine now 21 tests; F-12 unit 6 + 4.
+F-10 — REOPENED by reviewer B. NOT YET FIXED — needs product decision on PIN scope.
+  Reviewer RED: with a PIN set, vault-sourced AI analysis is returned without the PIN by
+  GET /api/evidence (evidence.js:57-97) and GET /api/questions/:questId
+  (questions.js:105-158, any role); Tracker uploads share one storage ref with their vault
+  mirror, so GET /api/evidence/:id/view|download serve the same bytes the vault PIN
+  gates. The earlier ledger claim "file bytes were always PIN-gated" was wrong.
+F-11 — REOPENED by reviewer B (P2). NOT YET FIXED — needs product decision.
+  Reviewer RED: a CONTRIBUTOR creates a current-month WIP assessment draft (no uniqueness
+  on quest+month), which displaces the AUDITED row as the "current effective" approval;
+  the lock no longer applies, a new version is accepted (201) and the auditor sees the
+  swapped file with the AUDITED row untouched; next month the AUDITED row carries forward
+  again over the swapped content. Same on FINISHED (avoids re-review). Siblings with no
+  lock: POST /api/vault with questId, POST /api/vault/:id/link, PUT /api/evidence/:id.
+
+F-01 — property regression found during review, FIXED (F-01 stays CLOSED).
+  GET /api/questions/:questId returned evidence rows with the raw file_path storage ref
+  (questions router lacked redactStoragePathsMiddleware; SELECT e.*). This directly
+  defeats F-01's "responses never expose raw storage paths" property, so it was fixed
+  under rule 6: router.use(redactStoragePathsMiddleware) on questions.js; regression
+  f01QuestionDetailPathRedaction.test.js. Swept all routers: no other route returns
+  storage refs without the middleware.
+
+NEW SEPARATE FINDINGS (from the review, not yet fixed):
+- F-16 (confirmed accurate by reviewer C): logo uploads (settings.js:239,
+  superadmin.js:356) and spreadsheet imports (frameworks.js:626, superadmin.js:422/599)
+  are not malware-scanned. P3.
+- F-17 P3: an assigned CONTRIBUTOR can PUT /api/requests/:id {status:"Completed"} without
+  attaching evidence (requests.js:267-275), bypassing the fulfil/Submitted workflow.
+- F-18 P3: POST /api/requests/:id/fulfill has no requireVaultPin; a CONTRIBUTOR can
+  create self-assigned requests and fulfil them with arbitrary vault ids to read vault
+  item titles/file metadata without the PIN (adjacent to F-10).
+- F-19 P3/P4: POST /api/vault/pin/verify has only the global limiter (600/5min/IP) and no
+  per-user lockout against a 6-digit PIN.
+- F-20 P4: vault PIN change/removal does not invalidate outstanding 8h vault tokens.
+- F-21 Low: seedSuperAdmin password rotation does not revoke superadmin sessions.
+
+POST-REVIEW DECISIONS AND FIXES — 2026-09-24
+F-10 — CLOSED (BY DESIGN for Tracker paths; user decision "vault page only").
+  The vault PIN protects the Evidence Vault section and /api/vault/* routes. Tracker
+  paths showing a question's evidence and AI analysis to its users (GET /api/evidence,
+  GET /api/questions/:questId, /api/evidence/:id/view|download) are intentionally not
+  PIN-gated. The quest-links PIN gate + Review-page prompt (earlier user request) stay.
+  Independent review verified the vault routes themselves (8 routes, token forgery,
+  cross-user/company tokens, expiry). F-18 (fulfil metadata without PIN) stays open as a
+  separate finding.
+F-11 — FIXED AGAIN (READY FOR CLOSURE); user decision "any audit ever locks it".
+  approvedEvidence.js no longer uses the current-effective carry-forward assessment:
+  - Lock: any non-archived AUDITED assessment, in ANY month, of any control the vault item
+    is linked to -> 409 LOCKED on new version / restore / rename / Tracker re-upload
+    (same rule delete/unlink already used). Closes the WIP-draft displacement bypass and
+    the next-month carry-forward variant.
+  - Reopen: FINISHED in any month -> change allowed; the latest FINISHED assessment per
+    linked control is reverted to Submitted (auto_reverted_* set, audit log, email to
+    the reviewer, in-app notification).
+  - PUT /api/evidence/:id (sibling): locked when the row was part of an AUDITED
+    assessment (evidence.evidence_id = assessment id, or unattached with the same
+    quest+month); reopens the matching FINISHED assessment. Deliberately NOT quest-wide:
+    Tracker.jsx attaches fresh rows via this PUT, and a quest-wide rule would block
+    saving any control audited in an earlier period.
+  - Linking NEW evidence to an audited control (POST /api/vault with questId,
+    POST /api/vault/:id/link) is intentionally still allowed: it does not alter the
+    evidence that was audited, and recurring controls need new evidence each period.
+  - collectionRunner.js helpers are no longer exported (automated drift detection keeps
+    its own effective-period revert, unchanged).
+  Regression: 7 new cases in f11ReviewedEvidenceImmutable.test.js (WIP-draft bypass,
+  earlier-month audit, FINISHED + draft re-review, Tracker row lock, fresh-row attach
+  allowed, FINISHED Tracker edit reopens, new-evidence link allowed) — f11 now 16.
+  Ten related suites 149/149. Unit 1743 passed / 7 skipped. Web build passes.
+Independent re-review of the post-review fixes (F-09, F-11, F-12, F-14, F-01 redaction):
+  NOT YET DONE.
+
+INDEPENDENT RE-REVIEW — 2026-09-24 (second pass, fresh reviewers, isolated DBs)
+F-09 — CLOSED / INDEPENDENTLY VERIFIED (re-review A). evidence_requests readers are
+  requests.js, dashboard.js, evidenceRequestFulfil.js, uploadQuarantine.js, vault.js
+  (fulfilRequestId pre-check); all company-bound. Legacy foreign assignee / assessment /
+  vault / question rows leak nothing to ADMIN/CONTRIBUTOR/REVIEWER across list, detail,
+  /dashboard, /dashboard/management, comment/PUT/fulfil; cross-tenant fulfil and
+  fulfilRequestId -> 404.
+F-14 — CLOSED / INDEPENDENTLY VERIFIED (re-review A). Automated sweep of every
+  questions/modules/qfc/dependency/module_templates query: remaining unscoped hits are
+  global superadmin-only module_templates, PK updates, and dynamic UPDATEs that always
+  bind company_id. questId array/object/whitespace variants rejected; global-only and
+  own questIds still 201 (Tracker + self-assessment seeding compatible).
+F-01 (post-review redaction fix) — VERIFIED (re-review A). Seeded refs in evidence,
+  vault, versions and upload_quarantine; 25 tenant GET routes x 3 roles + 8 superadmin
+  routes + PUT responses: no storage ref returned. F-01 remains CLOSED.
+Re-review A tests: 35/35 finding suites, 8/8 probes, 12 related suites 121/121.
+New separate (P4): F-22 — client questId not validated as visible to the caller on
+  POST /api/vault/:id/link (vault.js ~808), POST /api/actions (actions.js:84-99),
+  POST /api/reminders (reminders.js:104-113), POST /api/evidence (evidence.js:153-154);
+  data-integrity only — all read paths are tenant-first, probe confirmed no leak.
+  F-23 (P4, theoretical) — storage-migration error text returned to ADMIN by
+  GET /api/settings/evidence-storage; no path found that puts a ref into it.
+F-12 — CLOSED / INDEPENDENTLY VERIFIED (re-review B), with one Low race then fixed.
+  Real clamscan 2.4.0 vs fake clamd: bare OK, partial "stream: O", OK+junk, unexpected
+  text, ERROR, reset after partial reply, destroy without reply, 5 MB garbage, no reply
+  (15s timeout, no hang), scanFile() empty reply -> all "unavailable"; split-chunk OK
+  correctly clean. Found (Low, RED probe): stale-claim recovery could double-release when
+  a run exceeds 10 min, and a row that failed while 'finalizing' could be expired as
+  "discarded". Fixed: upload_quarantine.claim_token (fresh per claim); every transition
+  is conditional on it (the first worker gets "lost" and stops; no duplicate
+  notification); TTL-expiry on error only from 'processing'. Regression: race test in
+  f12UploadQuarantine (now 22).
+F-11 — REOPENED again by re-review B (P2), then FIXED (READY FOR CLOSURE).
+  RED: POST /api/assessments evidenceIds re-parenting (assessments.js ~210) moved an
+  audited Tracker row out with no lock check; PUT /api/evidence/:id only checked the
+  row's current parent, so the row could be edited and moved back under the AUDITED
+  assessment. Fix: POST checks every evidenceIds row (409 if part of an AUDITED
+  assessment; reopens FINISHED donors after commit); PUT checks current AND target
+  parent. Regression: 4 cases in f11 (now 20) incl. invalid-month rejection.
+  STILL OPEN (needs product decision): a CONTRIBUTOR can PUT /api/assessments/:auditedId
+  {reviewStatus:"WIP"} (200) — clears audited_by/at, removes the lock; Tracker "Edit
+  Assessment" exposes it for AUDITED rows (QuestionCard.jsx:479). The assessments.js:311
+  "only their own submission" comment is not enforced. No audit-log entry.
+Audit-period feature — two Medium issues found by re-review B, FIXED:
+  - Invalid month (e.g. 2026-13 via POST, carried to AUDITED) -> GET /api/vault 500 and
+    the cross-tenant staleness sweep failed for every company. Fix: POST
+    /api/assessments validates YYYY-(01..12); coverage SQL only considers valid months.
+  - Hold leaked across controls (per-item status restored if ANY linked control was
+    audited). Redesigned: the staleness sweep is back to the original (status reports
+    real freshness; scheduler.test.js passes UNCHANGED — it was broken by the first
+    version, which the ledger's 1743 count missed); the hold is applied at read time
+    per control (dashboard automated coverage: fresh OR held for THAT quest; vault
+    responses expose audited_through).
+  - Also: coverage capped at one interval after sign-off (far-future months); legacy
+    AUDITED rows with NULL audited_at use updated_at for the linked_at comparison.
+  Regression: auditPeriodEvidenceValidity (now 9).
+New separate findings from re-review B:
+- F-24 (Medium): ADMIN/LEAD DELETE /api/assessments/:id removes AUDITED assessments and
+  their evidence rows with no lock and no audit log (assessments.js:561).
+- F-25 (Low): template upgrade apply sets archived_at (drops the lock) and template
+  rename updates assessments.quest_id but not question_evidence/evidence
+  (frameworks.js:271), silently detaching the lock and coverage joins.
+- F-26 (Low): collectionRunner drift/failure revert still uses the current-effective
+  assessment, so a current-month WIP draft prevents reverting an AUDITED row on drift.
+- UX: Tracker re-upload on an audited control 409s until newer vault evidence is linked
+  (findLinkedVaultFileForQuestion picks the most recently updated linked item).
+Verification after fixes: 165/165 across 14 affected integration suites; F-11/F-12/audit
+  51/51; unit 1743 passed / 7 skipped (scheduler.test.js included); web build passes.
+INCIDENT: during this review the Docker VM disk reached 100% (bytes, not inodes —
+  images + build cache from repeated API rebuilds, plus two review DBs); prism-db-1
+  crash-looped with "No space left on device". Stopped the loop, restarted after space
+  freed: clean recovery, dev DB "compliance" verified intact; review DBs dropped. Disk
+  still 94% (918 MB free).
+F-11 — reopen rule decided (user: "Auditor or Admin only") and FIXED.
+  PUT /api/assessments/:id locks the row (SELECT ... FOR UPDATE) and refuses any
+  reviewStatus change on an AUDITED assessment unless the caller is AUDITOR or ADMIN
+  (409 code AUDITED); allowed reopens are written to audit_logs as
+  ASSESSMENT_AUDIT_REOPENED (who, quest, month, new status). Tracker QuestionCard hides
+  "Edit Assessment" on audited rows for other roles. Regression: 4 cases in f11 (now 24):
+  CONTRIBUTOR/LEAD refused + lock kept; AUDITOR/ADMIN allowed + audit-logged.
+  assessmentUpdate/CreationAuthorization (F-07) unchanged and green. Unit suite green.
+  F-11 status: FIXED / READY FOR CLOSURE — needs a third (targeted) re-review of the
+  re-parenting and reopen fixes before CLOSED.
+Disk: Docker build cache pruned with user approval (1.5 GB); VM disk 84%, 2.3 GB free.
+
+TARGETED F-11 RE-REVIEW — 2026-09-24 (third pass, fresh reviewer, isolated DB)
+Held: both earlier bypasses (current-month WIP draft; evidenceIds re-parent -> edit ->
+  move back) incl. variants (string/duplicate/"<id>abc"/"<id>.9" ids; PUT with only
+  questId / only month / evidenceId "x" / null / only notes -> 409); DELETE of an audited
+  row (LEAD 409, CONTRIBUTOR 403); reopen matrix on AUDITED (CONTRIBUTOR/LEAD refused for
+  every target status, audited_by kept); no other path creates AUDITED; vault PUT /
+  restore / version / Tracker re-upload / quarantine release all lock-checked; storage
+  migration and superadmin paths do not alter audited evidence.
+REOPENED (P2, RED probe): the legacy-row lock covered fewer rows than auditors are shown.
+  Review.jsx shows rows for the quest with matching OR NULL month; the auditor
+  Dashboard shows every row of the quest. Rows with a NULL month, a non-assessment
+  evidence_id (e.g. "x", or another company's id), or still attached to an older WIP
+  draft of the same quest+month stayed editable after the audit (PUT 200).
+FIXED: approvedAssessmentsForEvidenceRow now covers a row if it is attached to the
+  approved assessment OR it already existed (evidence.created_at) when that approval was
+  given (COALESCE(audited_at, reviewed_at, updated_at)) — matching what reviewers and
+  auditors are shown. Rows created later (next period) stay editable. evidence_id is
+  validated on POST/PUT /api/evidence: must be an assessment of this company for the
+  same question (400 otherwise); attaching new evidence straight into an AUDITED
+  assessment -> 409 (reviewer's F-11b). Regression: 5 cases in f11 (now 29, stable x3);
+  f11 setup backdates approval stamps 1 min to avoid same-millisecond Node/Postgres
+  ordering. One pre-existing f11 case now uses a real assessment id (the old "12345"
+  is correctly rejected by the new validation).
+Verification: 10 related suites 107/107; unit 1743 passed / 7 skipped; web build passes.
+New separate (Low): reviewerNotes editable by ADMIN/LEAD on an AUDITED assessment with no
+  audit-log entry (assessments.js:376, 398-404); ASSESSMENT_AUDIT_REOPENED log is
+  best-effort and outside the transaction; lock checks in POST /api/assessments and
+  PUT /api/evidence run outside a transaction (theoretical race with a concurrent
+  sign-off). UX correction: Tracker file re-upload on an ever-audited control is refused
+  permanently (every linked file item inherits the lock), not only "until newer
+  evidence is linked".
+F-11 status: FIXED / READY FOR CLOSURE — the third-review probes now pass; a fourth
+  independent look at this last change has NOT been done.
+
+F-24 — ADMIN/LEAD delete of AUDITED assessments. Severity: Medium.
+Previous status: NEW (from re-review B). New status: FIXED / READY FOR CLOSURE.
+Proven RED (3 cases): a LEAD deleted an AUDITED assessment and its attached evidence rows
+  (204) with no audit-log entry; ADMIN/LEAD deletes of any assessment were unlogged.
+Fix (same rule as the user's F-11 reopen decision — only AUDITOR/ADMIN may undo an audit;
+  AUDITOR cannot delete at all): DELETE /api/assessments/:id runs in one transaction with
+  SELECT ... FOR UPDATE; AUDITED -> 409 code AUDITED unless ADMIN; every deletion writes
+  ASSESSMENT_DELETED (who, quest, month, status, evidence rows deleted). The legacy
+  best-effort raw unlink is unchanged (still a no-op for storage refs — deliberately not
+  converted to deleteObject, because Tracker uploads share their stored object with the
+  vault mirror; the F-02 residual note stands). No frontend caller exists.
+Files: api/src/routes/assessments.js; api/src/__tests__/integration/f24AuditedAssessmentDelete.test.js (4).
+Regression: F-24 4/4 (3 RED before); assessment create/update auth (F-07) + f11: 66/66.
+Independent closure review: NOT YET DONE.
+
+F-17 — contributor completes a request without evidence. P3. FIXED / READY FOR CLOSURE.
+  RED (re-review A probe): assigned CONTRIBUTOR PUT /api/requests/:id {status:"Completed"}
+  -> 200. Fix (requests.js PUT): CONTRIBUTOR may only set Open / In Progress (403
+  otherwise) — Submitted comes from fulfil, Completed/Cancelled are manager decisions,
+  matching the UI. Regression: 4 cases in f09 suite (now 27).
+F-19 — vault PIN brute force. P3. FIXED / READY FOR CLOSURE.
+  POST /api/vault/pin/verify now has a per-user limiter (company+user key, 10 failed
+  attempts / 15 min, successes not counted; 429 code VAULT_PIN_LOCKED — even the correct
+  PIN is refused while locked; other users unaffected). In-memory store (per API process).
+F-20 — vault tokens survive PIN change. P4. FIXED / READY FOR CLOSURE.
+  Vault tokens carry pv = sha256(vault_pin_hash)[0..16]; requireVaultPin rejects a token
+  whose pv doesn't match the current PIN, so a PIN change (or reset) invalidates all
+  outstanding tokens; hand-minted tokens without pv are refused. f10 tests now obtain
+  real tokens via /pin/verify instead of hand-minting them. Regression: 3 cases in f10
+  (now 15); f10 + vault 30/30.
+F-22 — questId not validated on actions / reminders / vault link / evidence POST. P4.
+  FIXED / READY FOR CLOSURE. Shared isQuestionVisible() (db/effectiveRows.js): must be
+  the company's own or a global question, string only (400 otherwise). Regression:
+  f22QuestIdVisibility.test.js (4). 13 affected suites 160/160.
+
+FOURTH F-11 REVIEW — 2026-09-24/25 (fresh reviewer, isolated DB)
+Held: created_at cannot be set by clients (body createdAt/created_at ignored; quarantine
+  release and re-parenting never re-insert rows); PUT move-out/move-back; malformed
+  evidenceIds (" 1", "1 ", -1, 0x1, foreign company) 400; next-period evidence created
+  after an audit stays editable/attachable; FINISHED with reviewed_at NULL covered via
+  updated_at; TIMESTAMPTZ everywhere.
+REOPENED (P3, RED probe) + FIXED:
+  - Template-update rename (applyTemplateDiff, frameworks.js ~260, ADMIN/LEAD) renamed
+    assessments.quest_id but not evidence.quest_id / question_evidence.quest_id, so the
+    audit lock (both legacy rows and vault items) silently disappeared. Fix: the rename
+    now moves evidence rows and question_evidence links too (duplicate links merged).
+    This also closes the rename half of F-25.
+  - Product regression from the created_at rule (P2 for the product): next period's
+    evidence uploaded before a late audit of the previous period was locked, blocking the
+    whole Tracker submission (409) and reopening unrelated FINISHED approvals. Fix: the
+    created_at coverage now also requires the row's month to equal the approved month or
+    be NULL — exactly what the Review page shows for that assessment; the third review's
+    NULL-month / junk-id / old-draft cases (all same-month or NULL) stay locked.
+  - Low: out-of-range evidenceId -> 500. Fix: link check moved to
+    evidenceUploads.resolveEvidenceAssessmentLink — string/number only, 1..2147483647,
+    stored canonically (leading zeros and arrays no longer persisted as-is), and re-run
+    inside finalizeEvidenceUpload so a quarantined upload released after its target was
+    audited is rejected (reviewer's stale-link race).
+Regression: 6 cases in f11 (now 35) + 1 in f12 (now 23). 14 affected suites 178/178;
+  unit 1743 passed / 7 skipped; web build passes. One transient 30 s timeout on an older
+  f11 case during one run (not reproducible in 2 re-runs; local pg proxy).
+Still separate (Low/Info, not fixed): PUT /api/evidence rewrites uploaded_by from the body
+  or the editor and lets contributors set approvalStatus/reviewer; approval stamps use
+  Node time while evidence.created_at uses DB NOW() (ms-level window); per-row lock
+  queries on evidenceIds with no list cap.
+F-11 status: FIXED / READY FOR CLOSURE — fourth-review probes now pass; this last
+  change has not had its own independent look.
+
+F-16 — unscanned logo uploads and spreadsheet imports. P3. FIXED / READY FOR CLOSURE.
+  New utils/scanUpload.js middleware (scanFile on the multer disk file): tenant logo
+  (settings.js) and superadmin logo (superadmin.js) are checked by magic bytes (only
+  real PNG/JPEG/GIF/WebP pass — SVG and spoofed "images" are refused, so a
+  script-carrying SVG can never be stored as a logo) + ClamAV; the three .xlsx imports
+  (superadmin import-modules / preview-import, frameworks import/batches) are checked as
+  xlsx (PK magic) + ClamAV. Not evidence, so no quarantine: scanner unavailable -> 503
+  SCANNER_UNAVAILABLE and the file is deleted. Regression: f16UploadScanning.test.js (5);
+  settings, frameworkImport, superadminAiProvider green.
+  Observed (pre-existing functional bug, not changed): logos are saved to UPLOAD_DIR root
+  and returned as /uploads/<file>, but the API only serves /api/logos from
+  UPLOAD_DIR/logos — uploaded logos are not served at all.
+F-25 — template archive/rename detaching the lock. Rename half FIXED (above). The
+  archive half (template-upgrade apply sets archived_at, which drops the lock) remains
+  open: archiving a question removed from the template is intended, so this needs a
+  product decision (refuse removal of questions with AUDITED assessments, or keep
+  archived AUDITED assessments counting for the lock).
+
+COMBINED INDEPENDENT CLOSURE REVIEW (FIFTH) — 2026-09-25
+Method: three fresh reviewer agents (did not write the fixes), isolated DBs
+prism_review_a/b/c loaded from init.sql, probe tests only, no production code changed by
+reviewers. Scope: A = final F-11 change + F-24; B = F-16, F-19, F-20 (+ F-10 interaction,
+quarantine regression); C = F-17, F-22, audit-period validity, F-14 regression. 14
+confirmed faults (all RED probes), all fixed by the author afterwards. Probe files kept
+as regression tests (closureReview5*.test.js, 5 files).
+
+HELD (no change needed): F-19 (limiter key from authenticated user, interleaved
+  successes don't reset failures, no other PIN comparison path, hash never returned);
+  F-20 (same PIN re-set -> new salt/pv, old token 403; session/vault token confusion,
+  alg:none, cross-company all refused; every /api/vault* route uses requireVaultPin;
+  client attaches X-Vault-Token only to relative /api/vault paths); F-10 (every vault
+  route PIN-gated except /pin* and ADMIN-only analyze-policy); F-12 quarantine not
+  regressed; F-14 (tenant-first lookups, scoped assignee join); F-09 (no regression);
+  template rename tenant scoping; resolveEvidenceAssessmentLink incl. release re-check;
+  vault PUT/restore/versions/DELETE/unlink guards; F-17 status variants/unassigned/
+  cross-tenant/fulfil-after-Completed; audit hold cross-tenant, reopen removes hold,
+  LEAST cap, invalid month, no SQL injection.
+
+FAULTS FOUND AND FIXED:
+ A1 (P2) F-24 sibling: DELETE /api/assessments/:id deleted evidence rows attached to a
+    WIP draft that were also covered by an AUDITED sibling of the same quest+month
+    (Review shows them under the audited one). Fix: each cascaded row is checked with
+    approvedAssessmentsForEvidenceRow inside the delete; covered by another AUDITED
+    assessment -> 409 AUDITED unless ADMIN; covered FINISHED siblings are sent back to
+    review after commit.
+ A2 (P3) AUDITOR could set AUDITED on a WIP/Submitted assessment (reviewer stage
+    skipped). Fix: PUT requires the current status to be FINISHED (or already AUDITED)
+    -> 409 NOT_REVIEWED. The UI only offers the audit button on FINISHED/AUDITED.
+    Also (reviewer A plausible): re-confirming an AUDITED row no longer refreshes
+    audited_at/audited_by, so a re-audit can't widen the lock or hold window.
+ A3 (P4) Evidence shown under a month-less AUDITED assessment (Review shows every row)
+    stayed editable. Fix: coverage clause now (a.month IS NULL OR row month IS NULL OR
+    equal).
+ A4 (P4) Template rename onto a quest_id the company already had archived -> unique
+    violation 500. Fix: applyTemplateDiff moves the archived question and its
+    assessments/evidence/links/framework controls aside to "<id>~archived-<rowid>"
+    first; a live clash -> 409.
+ B1 (P3) F-16: POST /api/settings/logo wrote the file before checking role/company, so
+    any non-admin (or superadmin) left scanned files on disk (unbounded). Fix:
+    requireCompanyAdmin runs before multer.
+ B2 (P4) F-16 hardening: logo file extension came from the client filename (PNG/HTML
+    polyglot saved as .html). Fix: extension derived from the verified type
+    (png/jpg/gif/webp only) in settings.js and superadmin.js; other types -> 400.
+ C1 (P4) F-22 incomplete: PUT /api/actions/:id, PUT /api/evidence/:id and POST
+    /api/vault (questId, incl. quarantine path) accepted another tenant's private
+    questId. Fix: isQuestionVisible on all three.
+ C2 (P3) Audit-period hold stretchable: the period was derived from the control's
+    CURRENT recurrence_interval, so ADMIN/LEAD changing monthly -> annual after an audit
+    held lapsed evidence valid for a year. Fix: new assessments.audit_period_end, frozen
+    at sign-off (PUT -> AUDITED), cleared on any move away from AUDITED, and frozen for
+    that control's AUDITED rows before PUT /api/questions/:id/recurrence changes the
+    interval; coverage uses COALESCE(audit_period_end, computed).
+ C3 (P4) Legacy AUDITED rows (audited_at NULL) anchored on updated_at, which any edit
+    (reviewerNotes) moves. Fix: the hold requires audited_at; init.sql backfills
+    audited_at = updated_at once for existing AUDITED rows.
+ C4 (P4) F-17 sibling: an assigned (non-requester) contributor could change dueDate,
+    priority, assignee, title, description. Fix: 403 unless requester/ADMIN/LEAD.
+ C5 (P4) F-17 sibling: contributor could move a Submitted request back to Open/In
+    Progress. Fix: 403 (manager-only, as in the UI).
+ Plus robustness (reviewer C plausible 500s): non-string title/description and invalid
+    dueDate on PUT /api/requests -> 400; quest-links with repeated questIds params no
+    longer throws.
+
+Files: api/src/routes/{assessments,frameworks,settings,superadmin,actions,evidence,vault,
+  requests,questions}.js; api/src/utils/{approvedEvidence,auditCoverage}.js; init.sql
+  (assessments.audit_period_end + audited_at backfill); 5 closureReview5*.test.js.
+Verification: 35 affected integration suites 336/336 (fresh DB with new init.sql);
+  unit 1743 passed / 7 skipped. Web unchanged in this round (the only request PUT from
+  the UI sends {status}).
+Deployment note: the dev DB needs init.sql re-run (db-init) for audit_period_end.
+
+Recorded, not fixed (Low / product):
+ - Connector re-collection (collectionRunner.js ~103-182) appends versions / replaces
+   storage_path on vault items linked to AUDITED controls without assertNotAudited, and
+   auto-revert clears audited_* by the system — needs a product decision on automated
+   evidence vs. the audit lock.
+ - A CONTRIBUTOR can set WIP on any non-AUDITED assessment, not only their own
+   submission (submitted_by not checked).
+ - PUT /api/evidence changing only questId leaves evidence_id pointing at the old
+   quest's assessment (no lock bypass found).
+ - Vault PIN limiter is in-memory per API process.
+ - Vault tokens outlive a role change by up to 8h (role re-checked per route).
+ - Replaced logos are never deleted (pre-existing).
+
+STATUS AFTER FIFTH REVIEW:
+ F-11, F-16, F-17, F-19, F-20, F-22, F-24 — CLOSED / INDEPENDENTLY VERIFIED (the
+   faults found were fixed and are covered by regression tests; the fixes of this round
+   themselves have not had a further independent pass).
+ Audit-period validity — FIXED after review (C2/C3).
+ F-25 rename half — CLOSED (A4 fixed). F-25 archive half — OPEN (product decision).
+ F-18 (probably by design), F-21, F-23, F-26 — OPEN.
+
+USER DECISIONS + FIXES — 2026-09-25 (after the fifth review)
+Automated evidence vs. the audit lock — user decision: "as long as the actual finding
+  is the same it's okay, but if any finding changes the control should be marked for
+  review again." Implemented in collectionRunner.js:
+  - Unchanged finding (same payload, or only volatile numeric/timestamp drift): new
+    version appended, approvals untouched (existing behaviour, kept).
+  - Changed finding -> every approved (FINISHED/AUDITED) assessment linked to the item
+    that is still in effect today goes back to Submitted (auto_reverted_*, audit log,
+    email to reviewer/auditor; audited_* and audit_period_end cleared). "Changed" =
+    new failure, reopened failure, a passing check's evidence changing significantly
+    (existing), NEW: an open finding whose content changes while still failing, NEW:
+    an open finding resolving (check now passes).
+  - "In effect" = this month's, carried forward by recurrence, or AUDITED with its
+    audited period not yet ended. Approvals of periods that have ended keep their
+    sign-off (the evidence they saw is preserved in the item's version history).
+F-26 — CLOSED (fixed with the above). The revert no longer uses the current-effective
+  assessment, so a newer WIP draft can't shield an approval; question lookup is now
+  tenant-first (it previously ignored global template questions).
+  Regression: collectionRunner.test.js +3 (changed open finding with volatile-only
+  control case; F-26 draft shield; ended audit keeps sign-off); one existing case now
+  expects 3 reverts instead of 2 (resolution is a finding change under the decision).
+  The file now mocks email (it previously did not).
+F-25 archive half — CLOSED. User decision: "keep it for the audited period and then
+  remove it." New questions.archive_after DATE; utils/retireQuestion.js retireQuestion():
+  a removed question with an AUDITED assessment whose audited period
+  (audit_period_end, or computed) includes today is kept (question, assessments and
+  lock intact) with archive_after = period end; otherwise archived as before. Daily
+  scheduler job archiveRetiredQuestions re-decides after the date (a newer audit
+  extends it). A later version re-adding the question clears archive_after.
+  Regression: f25TemplateRemovalAuditHold.test.js (5).
+F-21 — CLOSED. super_admins.token_version (init.sql); super-admin session JWTs carry
+  tv; authenticate rejects a mismatch (401 SESSION_REVOKED); seedSuperAdmin bumps it
+  when the env password changes. Existing tokens without tv count as 0 (unchanged
+  password keeps sessions). Regression: f21SuperadminSessionRevocation.test.js (2).
+F-23 — CLOSED. storageMigration stores publicMigrationError(err): a fixed message plus
+  at most the error code/class name; the raw error is only logged server-side. init.sql
+  replaces previously stored raw text once. storageMigration.test.js assertion updated
+  from "raw text stored" to "safe summary stored, raw text absent" (intended behaviour
+  change). Regression: f23MigrationErrorRedaction.test.js (3, unit).
+Verification: 40 affected integration suites 448/448; unit 1746 passed / 7 skipped.
+  Web unchanged. Dev DB needs init.sql (db-init) for questions.archive_after and
+  super_admins.token_version (plus audit_period_end from the fifth-review fixes).
+Independent review of this round: NOT YET DONE.
+Remaining: F-18 (by design per the F-10 decision unless the user says otherwise);
+  Lows recorded in the fifth-review entry (contributor can send back any assessment,
+  in-memory PIN limiter, replaced logos never deleted, stale evidence_id on questId move).
+
+2026-09-25 — USER DECISIONS + LOW FIXES (before the sixth review)
+F-18 — CLOSED (BY DESIGN, user decision). POST /api/requests/:id/fulfill returning vault
+  item titles/file metadata without the vault PIN is accepted: the PIN protects the
+  Evidence Vault page (/api/vault/*) only (same decision as F-10). Fulfil stays
+  tenant-scoped (F-09) and contributor-limited (F-17).
+Low — contributor could send back anyone's assessment. FIXED. PUT /api/assessments/:id:
+  a CONTRIBUTOR may only set WIP on an assessment whose submitted_by is their email
+  (case-insensitive) -> else 403 NOT_OWN_SUBMISSION (checked after the AUDITED 409, so
+  audited rows still report AUDITED). QuestionCard.jsx hides "Edit Assessment" for
+  someone else's submission. Legacy rows with no submitted_by can only be reopened by a
+  LEAD/ADMIN.
+Low — replaced logos never deleted (+ pre-existing: logos never served). FIXED. New
+  utils/logoStorage.js shared by settings.js and superadmin.js: files saved to
+  UPLOAD_DIR/logos (served at /api/logos, folder resolved per request, X-Content-Type-
+  Options nosniff + CSP "default-src 'none'; sandbox", dotfiles denied); logo_url is now
+  /api/logos/<file>; saveCompanyLogo deletes the replaced file (current and legacy
+  /uploads/ forms; name must match ^logo-[\w.-]+$ and resolve inside the folder);
+  deleteCompanyFiles uses the same resolver. Legacy logos saved in the upload root are
+  not migrated (they were never served, and could carry client-chosen extensions);
+  they are removed on the next replacement or company deletion.
+Regression: lowFixesContributorReopenAndLogos.test.js (7); closureReview5UploadsAndVault
+  logo probes now check both folders. Unit 1746 / 7 skipped; web build passes.
+Ops: docker builder prune (7.0 GB) + dangling images; Docker VM disk 83% -> 43%.
+  Stack restarted: db-init re-ran init.sql on the dev DB (audit_period_end,
+  archive_after, super_admins.token_version present); api/web recreated; /health ok.
+
+SIXTH INDEPENDENT REVIEW — 2026-09-25 (three fresh reviewers, isolated DBs, live stack
+read-only smoke). Scope: A = connector finding-change rule, F-25/F-26, assessment
+workflow incl. the contributor rule; B = logos, F-21, F-23, regressions of F-10/12/13/
+15/16/19/20, live smoke; C = FULL integration suite (50 files, 524/524 at the time) +
+unit + web build + whole-diff review. 15 confirmed faults (all RED probes), all fixed;
+probes kept as closureReview6*.test.js (5 files).
+
+HELD: tenant scoping of every new/changed query; F-26 draft shield; multi-control vault
+  items; F-25 idempotency/reopen/extension/scheduler errors; AUDITED-from-FINISHED,
+  re-audit stamps, audit_period_end clearing; contributor PUT rule incl. legacy rows;
+  interval changes freeze periods; logo_url never client-controlled, logoFilePath
+  traversal-proof, /api/logos no listing/dotfiles/escape, nosniff + sandbox CSP; F-21
+  (only issuer = login, tv type confusion refused); F-23 migration path; F-19/F-20;
+  init.sql idempotent and non-destructive; frontend compatible with stricter API.
+Live smoke (GET only): /health 200; /api/logos 404s carry nosniff+CSP; protected
+  routes 401 without token; web :5173 serves index and proxies /api.
+
+FAULTS FIXED:
+ 6A1 (P2) Connector "same finding" filter only ignored numbers/timestamps at the top
+    level; 68 connectors nest data under `details`, so every poll's counter/timestamp
+    drift reverted FINISHED/AUDITED approvals. Fix: recursive comparison (objects by
+    keys, arrays by length+elements, volatile leaves at any depth); timestamp regex
+    anchored so "2026-01-01 strict" vs "... lenient" counts as a change.
+ 6A2 (P3) An AUDITED assessment for a future month was never sent back on a finding
+    change (lookup required month <= current). Fix: current or later months count as
+    in effect.
+ 6A3 (P3) Contributor could re-parent a colleague's evidence rows via POST
+    /api/assessments evidenceIds (and send their FINISHED approval back). Fix: a
+    CONTRIBUTOR may only move rows attached to their own submission, or unattached rows
+    they uploaded -> else 403 NOT_OWN_EVIDENCE (AUDITED lock 409 checked first).
+ 6A4 (P3) Contributor POSTing a new row for a quest+month displaced a colleague's
+    AUDITED/FINISHED control (newest row wins on Tracker/dashboard). Fix: POST over a
+    month with an AUDITED assessment -> 409 AUDITED unless ADMIN; a CONTRIBUTOR over a
+    colleague's FINISHED/AUDITED one -> 403 NOT_OWN_SUBMISSION.
+ 6A5 (P4) Template rename onto a question kept only for its audited period (F-25)
+    blocked the whole upgrade (409). Fix: a retiring question moves aside like an
+    archived one (its history, lock and archive_after go with it).
+ 6A6 (P3, pre-existing) A question re-added by a later template version after being
+    archived stayed archived (provisionTemplate ON CONFLICT DO NOTHING). Fix: re-added
+    questions are un-archived / un-retired and take the new version's content; their
+    old archived assessments stay archived history.
+ 6B1 (P3, pre-existing, in the F-23 area) Storage test-connection: an ADMIN could point
+    an Azure connection string (BlobEndpoint / protocol / suffix) at an internal
+    host:port and the raw SDK/remote reply (or ECONNREFUSED) came back — SSRF with
+    response reflection and a port-scan oracle. Fix: connection strings must use HTTPS
+    Azure blob endpoints (*.blob.core.windows.net / chinacloudapi.cn /
+    usgovcloudapi.net, no port, no dev storage, no other service endpoints); S3 region
+    must look like an AWS region; testBackend errors return only error code/class and
+    HTTP status (no raw text, no socket errno), full error logged.
+ 6B2 (P4) Superadmin logo upload for a non-existent company wrote and served an orphan
+    file then 500. Fix: company existence/int4 id checked before multer (400/404).
+ 6B3 (P4) Disk-upload magic check for image/webp only checked RIFF (WAVE accepted).
+    Fix: disk check reuses the buffer check (RIFF....WEBP).
+ 6B4 (P4, pre-existing) /api/consent POST and PATCH /link verified JWTs themselves, so
+    revoked (F-13/F-21) or super-admin sessions still linked consent logs. Fix:
+    activeSessionUserId() in middleware/auth.js (no purpose tokens, no super-admin,
+    token_version must match); invalid -> anonymous (POST) / 401 (PATCH).
+ 6C1 (P4) POST /api/assessments month given as an array bypassed the YYYY-MM check.
+    Fix: must be a string.
+ 6C2 (P4) dueDate validation accepted 2026-02-30 / trailing junk -> Postgres 500 on PUT;
+    POST had no check. Fix: strict calendar YYYY-MM-DD on both; title/description type
+    checks on POST.
+ 6C3/6C4 (P4) fulfilRequestId / fulfil vaultId beyond int4 -> 500. Fix: 1..2147483647
+    (requests.js parseId, vault.js).
+ Plus: scanDiskUpload wraps scanFile in try/catch (unhandled rejection guard);
+    SuperAdminDashboard logo preview prefixes VITE_API_URL, accepts PNG/JPEG/GIF/WebP
+    only and says so; f16UploadScanning uses a temp UPLOAD_DIR (13 stray 72-byte test
+    PNGs removed from api/uploads).
+Test updates (intended behaviour changes, not weakened): evidenceStorage.test.js expects
+  the safe S3 message; f11 "current-month draft" now also asserts the POST is refused
+  and seeds the legacy draft via SQL; f11 "taking evidence from a FINISHED assessment"
+  uses the contributor's own submission; closureReview6A displacement probe expects 409.
+Verification (after all fixes): FULL integration suite 55 files 549/549 (fresh DB, two
+  batches, disk 44%); unit 1746 passed / 7 skipped; web build passes. One vault.test.js
+  case timed out once in a mixed run and passed alone (known local-proxy flake).
+  API restarted on the final code; /health ok, web 200.
+
+Recorded, not fixed (product decisions / Low):
+ - Top-level numbers are always treated as noise (e.g. a retention-days value dropping
+   90 -> 0 while the check still passes doesn't reopen review) — needs a per-check
+   decision if wanted.
+ - A change to only a finding's message/severity (payload unchanged) updates the text
+   without reopening review.
+ - No separation of duties: a LEAD can approve their own submission or an unsubmitted
+   draft; an AUDITOR can edit auditorNotes on another auditor's AUDITED row.
+ - Contributor edits to a colleague's Tracker evidence row still send FINISHED approvals
+   back to review (F-11 design).
+ - Concurrent logo uploads for one company can orphan one file.
+ - Legacy /uploads/ logos are not shown (never were); they're removed on replacement.
+
+STATUS: F-01..F-26 all CLOSED (F-10, F-18 by design). No open findings; Lows above.
+
+2026-09-25 — USER DECISIONS
+ - A number changing on a passing (or failing) connector check IS a finding change and
+   reopens review — e.g. backup retention 90 -> 0 — unless the number only measures
+   time passing (ages, time-since / time-until counters, "last seen").
+ - LEADs are NOT blocked from approving their own submissions (no separation-of-duties
+   rule).
+
+SEVENTH INDEPENDENT REVIEW — 2026-09-25 (review of the sixth-review fixes + the number
+rule; three fresh reviewers, isolated DBs). Full suite at review time 55 files 554/554.
+FAULTS FOUND AND FIXED:
+ 7A1 (P2) Clock-key heuristic missed real day counters that tick daily (daysToExpiry
+    akamai cps, overdueDays onetrust risk, activeDays onetrust/privy DSARs, spanDays
+    salesforce audit) -> daily revert of FINISHED/AUDITED approvals + email. 7C1 (P3):
+    the first pattern was case-insensitive, so "agents"/"agedBeyondWindow" (real
+    carbonite-server / crowdstrike counts) were treated as noise; 7A1b (P4) "artifactsSeen"
+    (privy total) treated as noise. Fix: case-sensitive, word-aware CLOCK_KEY_PATTERNS
+    (age/since/uptime/elapsed/seen words; *Age<unit>; days|hours...Since/Ago/Open/To/
+    Until...; (overdue|active|inactive|idle|open|pending|span|paused)<unit>;
+    last/oldest/newest + time noun; remaining<unit>; *LastSeen), settings prefixes
+    (max/min/threshold/retention/...) always compared. Verified against every numeric
+    key the connectors emit. Rolling-window counts (incidentsLast12Months,
+    artifactsLast30Days) are compared (they change only when an item enters/leaves the
+    window) — per the user's number rule.
+ 7A2 (P3) An AUDITED control could still be displaced by a POST for a LATER month
+    inside its audited period, or a far-future month (2099-12 flipped the executive
+    control status). Fix: POST month may not be later than the current month (14h
+    client-clock slack) -> 400; non-ADMIN POST for a month covered by an earlier
+    AUDITED assessment's audited period -> 409 AUDITED.
+ 7B1 (P3) Azure connection-string SSRF fix bypassable via parser differentials (SDK is
+    case-sensitive, first-duplicate-wins, unanchored key match, unchecked AccountName
+    in the host): three strings reached a 127.0.0.1 listener. Fix:
+    evidenceStorage.parseAzureConnectionString — strict parser (canonical keys only, no
+    duplicates/unknown keys, https only, AccountName [a-z0-9]{1,24}, known suffixes,
+    BlobEndpoint https://<acct>.blob.<suffix> with no port/userinfo/path/query, AccountKey
+    base64, SAS charset) and the client is BUILT from the parsed parts
+    (StorageSharedKeyCredential / SAS URL) — the raw string never reaches the SDK
+    parser. Applied at connect time too, so credentials saved earlier are also covered.
+ 7C2 (P3) The 6A3 fix broke the Tracker: it sends every evidence row of the control and
+    month as evidenceIds, so a contributor continuing a colleague's draft got 403.
+    Fix: contributors may take a colleague's DRAFT evidence; they are refused (403
+    NOT_OWN_EVIDENCE) only for rows behind a colleague's approved (FINISHED/AUDITED)
+    assessment.
+ 7C3 (P4) PUT /api/evidence/:id could still move/edit a colleague's approved evidence
+    (and send the approval back). Fix: same NOT_OWN_EVIDENCE rule on PUT (this also
+    retires the earlier Low about contributor edits to a colleague's evidence).
+ 7C4 (P4) evidenceIds beyond int4 -> 500. Fix: strict 1..2147483647 filter.
+ 7B2 (P4) dueDate "0000-01-01" -> 500. Fix: year >= 1.
+ 7B3 (P4, pre-existing) ~60 routes pass unbounded ids / unvalidated dates to Postgres
+    (e.g. GET /api/requests/99999999999, POST /api/notifications/abc/read, questions
+    dueDate, auditors expiryDate) -> 500. Fix: errorHandler maps Postgres invalid-input
+    errors (22P02, 22003, 22007, 22008, 22023) to 400 "Invalid input".
+ Also: activeSessionUserId (consent) refuses users of rejected/suspended companies.
+HELD: 6A2 future-month in-effect lookup; 6A5/6A6 rename/re-add; 6B2/6B3/6B4; 6C1/6C3/
+  6C4; S3 region/bucket can't redirect the endpoint; no remote error text reflected;
+  web callers compatible; no test weakened (reviewer C compared test diffs).
+Test updates: f11 "editing a Tracker row of a FINISHED assessment" uses the
+  contributor's own submission (a colleague's is now refused); closureReview7A
+  displacement probes accept 400 (future month) or 409 and gained a covered-month case.
+Regression files: closureReview7*.test.js (5).
+Verification (final code): FULL integration suite 60 files 590/590 (fresh DB);
+  unit 1746 passed / 7 skipped; web build passes. API restarted.
+Recorded, not fixed (Low / cosmetic / product):
+ - Date/timestamp changes are always noise (a certificate expiry or DSAR due date
+   moving doesn't reopen review).
+ - A question moved aside by a rename stays visible as "<id>~archived-<n>" until its
+   audited period ends; quest_id-keyed actions/reminders/requests follow the new id.
+ - quest_id is unique per company across frameworks: a framework re-adding an id that
+   belongs to another framework's archived question revives that row with new content.
+ - Legacy duplicate rows: a contributor can reopen their own row (PUT) but a later POST
+   is refused if a colleague's older FINISHED row exists for the same month.
+ - Consent link claims the newest anonymous log from the same IP (by design).
+ - Arrays in connector payloads are compared in order.
+
+STATUS: F-01..F-26 CLOSED (F-10, F-18 by design). Committed to main (see git log).

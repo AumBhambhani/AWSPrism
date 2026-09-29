@@ -1,0 +1,293 @@
+/* ============================================================
+   PRISM PRICING PAGE — packages table + custom calculator
+   Built on top of the hp-root design tokens from Homepage.css
+   ============================================================ */
+
+.pr-hero {
+  padding-bottom: 40px;
+}
+
+/* ---------- Packages table ---------- */
+.pr-table-section {
+  padding-top: 0;
+}
+
+.pr-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--hp-line);
+  border-radius: 18px;
+  box-shadow: var(--hp-shadow-sm);
+  background: var(--hp-surface-card);
+}
+
+.pr-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.pr-table thead th {
+  text-align: center;
+  font-family: var(--hp-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hp-ink-2);
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--hp-line-strong);
+}
+
+.pr-table thead th.pr-table-col-custom {
+  color: var(--hp-accent);
+}
+
+.pr-table th.pr-table-row-label,
+.pr-table td.pr-table-row-label {
+  text-align: left;
+  font-family: var(--hp-font);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+  color: var(--hp-ink);
+  width: 46%;
+}
+
+.pr-table tbody td {
+  padding: 13px 16px;
+  text-align: center;
+  border-bottom: 1px solid var(--hp-line);
+  vertical-align: middle;
+}
+
+.pr-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pr-table tbody tr.pr-row-lead td {
+  background: var(--hp-accent-bg);
+  font-weight: 700;
+}
+
+.pr-table td.pr-table-col-custom {
+  background: color-mix(in srgb, var(--hp-accent-bg) 55%, transparent);
+}
+
+.pr-cell-text {
+  font-size: 13px;
+  color: var(--hp-ink-2);
+}
+.pr-row-lead .pr-cell-text {
+  color: var(--hp-ink);
+  font-weight: 700;
+}
+
+.pr-cell-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--hp-accent-bg);
+  border: 1px solid var(--hp-accent-light);
+  color: var(--hp-accent);
+  font-size: 12px;
+}
+
+.pr-table-footnote {
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--hp-ink-3);
+}
+
+/* ---------- Starter / Custom blurb cards ---------- */
+.pr-blurbs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.pr-blurb-card {
+  background: var(--hp-surface-card);
+  border: 1px solid var(--hp-line);
+  border-radius: 18px;
+  padding: 30px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--hp-shadow-sm);
+}
+
+.pr-blurb-card h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--hp-ink);
+  margin: 0 0 4px;
+}
+
+.pr-blurb-card p {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--hp-ink-2);
+  margin: 0;
+}
+
+.pr-blurb-card .hp-btn {
+  margin-top: auto;
+  text-decoration: none;
+}
+
+.pr-blurb-featured {
+  border-color: var(--hp-accent);
+  box-shadow: 0 0 0 1.5px var(--hp-accent), var(--hp-shadow-hover);
+}
+
+/* ---------- Calculator ---------- */
+.pr-calc-layout {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+  align-items: start;
+  margin-top: 8px;
+}
+
+.pr-calc-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--hp-surface-card);
+  border: 1px solid var(--hp-line);
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: var(--hp-shadow-sm);
+}
+
+.pr-calc-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pr-calc-label {
+  font-family: var(--hp-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hp-ink-3);
+}
+
+.pr-calc-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pr-calc-chip {
+  font-family: var(--hp-font);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--hp-ink-2);
+  background: var(--hp-surface);
+  border: 1px solid var(--hp-line-strong);
+  border-radius: 9999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.pr-calc-chip:hover {
+  border-color: var(--hp-accent);
+  color: var(--hp-accent);
+}
+.pr-calc-chip.active {
+  background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+}
+
+.pr-calc-result {
+  position: sticky;
+  top: 88px;
+  background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
+  border-radius: 18px;
+  padding: 30px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #ffffff;
+  box-shadow: var(--hp-shadow-hover);
+}
+
+.pr-calc-result-label {
+  font-family: var(--hp-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.pr-calc-result-value {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 4px 0 2px;
+}
+.pr-calc-result-period {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin-left: 4px;
+}
+
+.pr-calc-result-note {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 14px;
+}
+
+.pr-calc-result .hp-btn-primary {
+  background: #ffffff;
+  color: #4338CA;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+.pr-calc-result .hp-btn-primary:hover {
+  background: #F1F5F9;
+  transform: translateY(-2px);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1140px) {
+  .pr-calc-layout {
+    grid-template-columns: 1fr;
+  }
+  .pr-calc-result {
+    position: static;
+  }
+}
+
+@media (max-width: 860px) {
+  .pr-blurbs-grid {
+    grid-template-columns: 1fr;
+  }
+  .pr-table thead th,
+  .pr-table tbody td {
+    padding: 11px 10px;
+    font-size: 12.5px;
+  }
+  .pr-calc-grid {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .pr-calc-result-value {
+    font-size: 28px;
+  }
+}

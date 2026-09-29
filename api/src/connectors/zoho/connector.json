@@ -1,0 +1,63 @@
+{
+  "key": "zoho",
+  "name": "Zoho",
+  "category": "business_apps",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "zoho.directory.mfa_enforced", "title": "Multi-factor authentication is enforced org-wide", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "zoho.directory.sso_enforced", "title": "Single sign-on is enforced for all applications", "severityDefault": "high", "isoReferences": ["A.9.2.1"] },
+    { "testKey": "zoho.directory.inactive_user_review", "title": "Inactive or terminated users are deprovisioned", "severityDefault": "medium", "isoReferences": ["A.9.2.6"] },
+
+    { "testKey": "zoho.crm.mfa_enforced", "title": "CRM users have multi-factor authentication enabled", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "zoho.crm.data_sharing_rules_restricted", "title": "Data sharing rules do not grant org-wide read/write", "severityDefault": "high", "isoReferences": ["A.13.1.1"] },
+    { "testKey": "zoho.crm.audit_log_enabled", "title": "Audit log tracking is enabled", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+
+    { "testKey": "zoho.books.user_role_review", "title": "User roles follow least privilege", "severityDefault": "medium", "isoReferences": ["A.9.2.2"] },
+    { "testKey": "zoho.books.two_factor_auth_enforced", "title": "Two-factor authentication is enforced", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "zoho.books.audit_trail_enabled", "title": "Audit trail is enabled and retained", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+
+    { "testKey": "zoho.people.data_access_review", "title": "Employee data access is restricted by role", "severityDefault": "high", "isoReferences": ["A.9.1.1"] },
+    { "testKey": "zoho.people.sensitive_field_encryption", "title": "Sensitive HR fields are access-restricted", "severityDefault": "high", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "zoho.people.admin_role_review", "title": "Admin role assignment is minimized", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+
+    { "testKey": "zoho.workdrive.external_sharing_restricted", "title": "External sharing is restricted at the team level", "severityDefault": "critical", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "zoho.workdrive.link_sharing_password_protected", "title": "Public share links require a password and expiry", "severityDefault": "high", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "zoho.workdrive.admin_activity_log_enabled", "title": "Admin activity logging is enabled", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+
+    { "testKey": "zoho.desk.agent_role_audit", "title": "Agent roles follow least privilege", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+    { "testKey": "zoho.desk.customer_data_field_restricted", "title": "Customer PII fields are profile-restricted", "severityDefault": "high", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "zoho.desk.ticket_access_control_enabled", "title": "Ticket access control (team/department scoping) is enabled", "severityDefault": "medium", "isoReferences": ["A.9.1.2"] },
+
+    { "testKey": "zoho.mail.forwarding_restricted", "title": "Auto-forwarding to external domains is restricted", "severityDefault": "high", "isoReferences": ["A.13.2.3"] },
+    { "testKey": "zoho.mail.two_factor_auth_enforced", "title": "Two-factor authentication is enforced for mailboxes", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "zoho.mail.spam_phishing_filters_enabled", "title": "Spam and phishing filters are enabled", "severityDefault": "medium", "isoReferences": ["A.12.2.1"] },
+
+    { "testKey": "zoho.vault.secret_sharing_policy", "title": "Secret sharing outside designated chambers is restricted", "severityDefault": "high", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "zoho.vault.password_policy_strength", "title": "Vault-generated/stored passwords meet minimum strength policy", "severityDefault": "high", "isoReferences": ["A.9.4.3"] },
+    { "testKey": "zoho.vault.access_log_review", "title": "Vault access logs are enabled and retained", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+
+    { "testKey": "zoho.projects.external_user_review", "title": "External/client users have scoped project access", "severityDefault": "medium", "isoReferences": ["A.9.1.1"] },
+    { "testKey": "zoho.projects.client_portal_access_restricted", "title": "Client portal access is restricted to intended projects", "severityDefault": "medium", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "zoho.projects.role_based_permissions_enforced", "title": "Role-based permissions are enforced per project", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+
+    { "testKey": "zoho.analytics.data_sharing_review", "title": "Workspace/view sharing is scoped to intended users", "severityDefault": "high", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "zoho.analytics.public_view_link_restricted", "title": "Public/embedded view links are disabled or reviewed", "severityDefault": "critical", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "zoho.analytics.workspace_permission_review", "title": "Workspace admin/owner assignment is minimized", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+
+    { "testKey": "zoho.creator.app_permission_review", "title": "App-level permissions follow least privilege", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+    { "testKey": "zoho.creator.public_form_data_exposure", "title": "Public forms do not expose sensitive existing records", "severityDefault": "critical", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "zoho.creator.deluge_script_access_review", "title": "Custom (Deluge) script edit access is restricted", "severityDefault": "medium", "isoReferences": ["A.14.2.5"] },
+
+    { "testKey": "zoho.sign.audit_trail_enabled", "title": "Document audit trail is enabled", "severityDefault": "high", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "zoho.sign.template_access_restricted", "title": "Template access is restricted to authorized users", "severityDefault": "medium", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "zoho.sign.completed_document_retention", "title": "Completed document retention meets policy", "severityDefault": "medium", "isoReferences": ["A.18.1.3"] },
+
+    { "testKey": "zoho.expense.approval_policy_enforced", "title": "Expense approval requires a separate approver", "severityDefault": "medium", "isoReferences": ["A.6.1.2"] },
+    { "testKey": "zoho.expense.receipt_data_retention", "title": "Receipt/expense data retention meets policy", "severityDefault": "medium", "isoReferences": ["A.18.1.3"] },
+    { "testKey": "zoho.expense.card_data_masking", "title": "Corporate card numbers are masked", "severityDefault": "high", "isoReferences": ["A.8.2.3"] },
+
+    { "testKey": "zoho.recruit.candidate_data_access_review", "title": "Candidate data access is restricted by role", "severityDefault": "high", "isoReferences": ["A.9.1.1"] },
+    { "testKey": "zoho.recruit.data_retention_policy_configured", "title": "Candidate data retention/deletion policy is configured", "severityDefault": "medium", "isoReferences": ["A.18.1.3"] },
+    { "testKey": "zoho.recruit.job_posting_visibility_review", "title": "Job posting visibility matches intended audience", "severityDefault": "low", "isoReferences": ["A.13.2.1"] }
+  ]
+}

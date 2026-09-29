@@ -1,0 +1,31 @@
+{
+  "key": "onetrust",
+  "name": "OneTrust",
+  "category": "data_governance",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "onetrust.assessments.no_stale_in_progress", "title": "In-progress assessments are progressing, not stalled", "severityDefault": "medium", "isoReferences": ["A.18.2.2"] },
+    { "testKey": "onetrust.assessments.high_risks_mitigated", "title": "High risks on completed assessments are mitigated", "severityDefault": "high", "isoReferences": ["A.18.1.4"] },
+    { "testKey": "onetrust.assessments.dpia_process_operating", "title": "A PIA/DPIA process is operating", "severityDefault": "medium", "isoReferences": ["A.18.1.4"] },
+
+    { "testKey": "onetrust.inventory.ropa_populated", "title": "Records of Processing Activities (RoPA) is populated", "severityDefault": "high", "isoReferences": ["A.18.1.1"] },
+    { "testKey": "onetrust.inventory.records_have_owners", "title": "Data-inventory records have an assigned owner", "severityDefault": "medium", "isoReferences": ["A.8.1.2"] },
+    { "testKey": "onetrust.inventory.records_reviewed_annually", "title": "Data-inventory records are reviewed at least annually", "severityDefault": "low", "isoReferences": ["A.8.1.1"] },
+
+    { "testKey": "onetrust.dsar.within_statutory_deadline", "title": "Data-subject requests are handled within the statutory deadline", "severityDefault": "high", "isoReferences": ["A.18.1.4"] },
+    { "testKey": "onetrust.dsar.progressing", "title": "New data-subject requests are progressing, not sitting untouched", "severityDefault": "medium", "isoReferences": ["A.18.1.4"] },
+    { "testKey": "onetrust.dsar.no_excessive_pause", "title": "Data-subject requests are not paused indefinitely", "severityDefault": "low", "isoReferences": ["A.18.1.4"] },
+
+    { "testKey": "onetrust.incidents.no_stale_open", "title": "Open incidents are being worked, not left stale", "severityDefault": "medium", "isoReferences": ["A.16.1.5"] },
+    { "testKey": "onetrust.incidents.breach_decision_recorded", "title": "Breach-notification decisions are recorded promptly", "severityDefault": "high", "isoReferences": ["A.16.1.4"] },
+    { "testKey": "onetrust.incidents.register_operating", "title": "The incident register is in active use", "severityDefault": "low", "isoReferences": ["A.16.1.2"] },
+
+    { "testKey": "onetrust.risk.high_risks_have_treatment", "title": "Open high risks have a treatment plan", "severityDefault": "high", "isoReferences": ["A.18.1.4"] },
+    { "testKey": "onetrust.risk.treatment_not_overdue", "title": "Risk treatment deadlines are met", "severityDefault": "medium", "isoReferences": ["A.18.1.4"] },
+    { "testKey": "onetrust.risk.register_maintained", "title": "A risk register is maintained", "severityDefault": "low", "isoReferences": ["A.18.1.4"] },
+
+    { "testKey": "onetrust.vendors.risk_assessed", "title": "Vendors have a completed risk assessment", "severityDefault": "high", "isoReferences": ["A.15.1.1"] },
+    { "testKey": "onetrust.vendors.high_risk_reviewed", "title": "High-risk vendors are reviewed at least annually", "severityDefault": "medium", "isoReferences": ["A.15.2.1"] },
+    { "testKey": "onetrust.vendors.inventory_populated", "title": "A vendor inventory is maintained", "severityDefault": "low", "isoReferences": ["A.15.1.1"] }
+  ]
+}

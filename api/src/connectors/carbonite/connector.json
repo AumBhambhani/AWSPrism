@@ -1,0 +1,11 @@
+{
+  "key": "carbonite",
+  "name": "Carbonite Core Endpoint Backup",
+  "category": "backup",
+  "authType": "api_key",
+  "tests": [
+    { "testKey": "carbonite.backup.recent_successful_backup", "title": "Devices have a recent successful backup", "severityDefault": "critical", "isoReferences": ["A.12.3.1"] },
+
+    { "testKey": "carbonite.backup.device_coverage", "title": "Devices remain actively protected", "severityDefault": "high", "isoReferences": ["A.12.3.1", "A.12.4.1"] }
+  ]
+}

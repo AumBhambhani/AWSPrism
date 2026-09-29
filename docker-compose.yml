@@ -1,0 +1,118 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    ports:
+      - "5433:5432"
+    healthcheck:
+      # -h 127.0.0.1 forces TCP: on first init the entrypoint runs a temporary
+      # socket-only server that would otherwise report healthy, then restart.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # One-shot: re-applies init.sql against the running db on every
+  # `docker compose up`, not just on first volume init. Every statement in
+  # init.sql is idempotent (CREATE TABLE IF NOT EXISTS, ON CONFLICT DO
+  # NOTHING), so this only adds new tables/seed rows — it never touches or
+  # wipes existing data.
+  db-init:
+    image: postgres:16-alpine
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./init.sql:/init.sql:ro
+    command: ["psql", "-h", "db", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}", "-v", "ON_ERROR_STOP=1", "-f", "/init.sql"]
+
+  clamav:
+    image: clamav/clamav:stable_base
+    platform: linux/amd64
+    restart: unless-stopped
+    volumes:
+      - clamav_data:/var/lib/clamav
+    healthcheck:
+      test: ["CMD", "clamdcheck.sh"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    env_file:
+      - ./.env
+    environment:
+      PORT: 4000
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      UPLOAD_DIR: /app/uploads
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      EMAIL_FROM: ${EMAIL_FROM:-team@prismgrc.co}
+      CONTACT_EMAIL: ${CONTACT_EMAIL:-team@prismgrc.co}
+      TEAM_NOTIFY_EMAIL: ${TEAM_NOTIFY_EMAIL:-team@prismgrc.co}
+      GAP_REPORT_RECIPIENT: ${GAP_REPORT_RECIPIENT:-ab@neozaar.com}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      BEDROCK_CHAT_MODEL: ${BEDROCK_CHAT_MODEL}
+      BEDROCK_EMBEDDING_MODEL: ${BEDROCK_EMBEDDING_MODEL}
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: 3310
+      SUPERADMIN_EMAIL: ${SUPERADMIN_EMAIL}
+      SUPERADMIN_PASSWORD: ${SUPERADMIN_PASSWORD}
+    volumes:
+      - api_uploads:/app/uploads
+      - prism_exports:/app/exports
+      - ./api:/app
+      - /app/node_modules
+    depends_on:
+      clamav:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+    ports:
+      - "${API_PORT}:4000"
+
+  web:
+    build: ./web
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    ports:
+      - "${WEB_PORT}:5173"
+
+volumes:
+  clamav_data:
+  db_data:
+  api_uploads:
+  prism_exports:

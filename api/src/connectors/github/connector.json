@@ -1,0 +1,17 @@
+{
+  "key": "github",
+  "title": "GitHub",
+  "category": "devops",
+  "authTypes": ["oauth2"],
+  "tests": [
+    { "testKey": "github.org.two_factor_required", "title": "Organization requires two-factor authentication", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "github.repo.branch_protection_required_reviews", "title": "Default branch requires pull request review before merging", "severityDefault": "high", "isoReferences": ["A.14.2.2"] },
+    { "testKey": "github.repo.vulnerability_alerts_enabled", "title": "Dependabot vulnerability alerts are enabled", "severityDefault": "high", "isoReferences": ["A.12.6.1"] },
+    { "testKey": "github.repo.secret_scanning_enabled", "title": "Secret scanning is enabled", "severityDefault": "medium", "isoReferences": ["A.9.4.3"] },
+    { "testKey": "github.org.default_repository_permission_restricted", "title": "Default repository permission is not admin", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+    { "testKey": "github.org.owners_count_minimized", "title": "Organization owner role is limited to necessary personnel", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+    { "testKey": "github.org.actions_default_workflow_permissions_readonly", "title": "Actions default workflow token permissions are read-only", "severityDefault": "high", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "github.org.actions_third_party_restricted", "title": "Actions are restricted to verified or selected sources", "severityDefault": "medium", "isoReferences": ["A.14.2.2"] },
+    { "testKey": "github.repo.code_scanning_default_setup_enabled", "title": "Code scanning (CodeQL) default setup is enabled", "severityDefault": "high", "isoReferences": ["A.12.6.1"] }
+  ]
+}

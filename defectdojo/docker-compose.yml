@@ -1,0 +1,97 @@
+x-django-env: &django-env
+  DD_DATABASE_URL: postgresql://defectdojo:defectdojo@postgres:5432/defectdojo
+  DD_SECRET_KEY: ${DD_SECRET_KEY}
+  DD_ADMIN_USER: ${DD_ADMIN_USER:-admin}
+  DD_ADMIN_PASSWORD: ${DD_ADMIN_PASSWORD}
+  DD_ALLOWED_HOSTS: "localhost,127.0.0.1"
+  DD_CELERY_BROKER_URL: redis://redis:6379/0
+  DD_CELERY_RESULT_BACKEND: redis://redis:6379/0
+
+services:
+  # Runs migrations + creates admin user once, then exits
+  initializer:
+    image: defectdojo/defectdojo-django:latest
+    entrypoint: ["/entrypoint-initializer.sh"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      <<: *django-env
+    volumes:
+      - dojo_media:/app/media
+
+  # DefectDojo nginx expects upstream at hostname "uwsgi:3031"
+  uwsgi:
+    image: defectdojo/defectdojo-django:latest
+    entrypoint: ["/entrypoint-uwsgi.sh"]
+    depends_on:
+      initializer:
+        condition: service_completed_successfully
+    environment:
+      <<: *django-env
+    volumes:
+      - dojo_media:/app/media
+    restart: unless-stopped
+
+  nginx:
+    image: defectdojo/defectdojo-nginx:latest
+    ports:
+      - "8888:8080"
+    depends_on:
+      - uwsgi
+    environment:
+      NGINX_METRICS_ENABLED: "false"
+    volumes:
+      - dojo_media:/app/media:ro
+    restart: unless-stopped
+
+  celery-worker:
+    image: defectdojo/defectdojo-django:latest
+    entrypoint: ["/entrypoint-celery-worker.sh"]
+    depends_on:
+      initializer:
+        condition: service_completed_successfully
+    environment:
+      <<: *django-env
+    volumes:
+      - dojo_media:/app/media
+    restart: unless-stopped
+
+  celery-beat:
+    image: defectdojo/defectdojo-django:latest
+    entrypoint: ["/entrypoint-celery-beat.sh"]
+    depends_on:
+      initializer:
+        condition: service_completed_successfully
+    environment:
+      <<: *django-env
+    volumes:
+      - dojo_media:/app/media
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: defectdojo
+      POSTGRES_USER: defectdojo
+      POSTGRES_PASSWORD: defectdojo
+    volumes:
+      - dojo_postgres:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U defectdojo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  dojo_media:
+  dojo_postgres:

@@ -1,0 +1,14 @@
+{
+  "key": "commvault",
+  "name": "Commvault",
+  "category": "backup",
+  "authType": "api_key",
+  "tests": [
+    { "testKey": "commvault.backup.sla_compliance", "title": "Monitored entities meet their backup SLA", "severityDefault": "critical", "isoReferences": ["A.12.3.1"] },
+
+    { "testKey": "commvault.storage.worm_lock_enabled", "title": "Storage policy copies have WORM / compliance lock enabled", "severityDefault": "high", "isoReferences": ["A.18.1.3"] },
+    { "testKey": "commvault.storage.encryption_enabled", "title": "Storage policy copies have encryption enabled", "severityDefault": "high", "isoReferences": ["A.10.1.2"] },
+
+    { "testKey": "commvault.monitoring.alerts_configured", "title": "An alert is configured for backup job failures", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] }
+  ]
+}

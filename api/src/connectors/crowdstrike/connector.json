@@ -1,0 +1,20 @@
+{
+  "key": "crowdstrike",
+  "name": "CrowdStrike Falcon",
+  "category": "endpoint_security",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "crowdstrike.host.stale_endpoints_reviewed", "title": "No endpoints have gone stale without review", "severityDefault": "high", "isoReferences": ["A.12.2.1"] },
+    { "testKey": "crowdstrike.host.unmanaged_reduced_functionality", "title": "No hosts are running in reduced functionality / sensor-degraded mode", "severityDefault": "high", "isoReferences": ["A.12.2.1"] },
+
+    { "testKey": "crowdstrike.sensor.policy_compliance", "title": "All managed hosts are assigned an active sensor update policy", "severityDefault": "high", "isoReferences": ["A.12.2.1"] },
+    { "testKey": "crowdstrike.sensor.build_currency", "title": "Sensor update policies pin to a current (not deprecated) sensor build", "severityDefault": "medium", "isoReferences": ["A.12.6.1"] },
+
+    { "testKey": "crowdstrike.detection.high_severity_backlog", "title": "High/critical severity detections are triaged within SLA", "severityDefault": "critical", "isoReferences": ["A.16.1.5"] },
+    { "testKey": "crowdstrike.detection.no_unresolved_incidents", "title": "No detections remain in an unresolved state past the review window", "severityDefault": "high", "isoReferences": ["A.16.1.5"] },
+
+    { "testKey": "crowdstrike.vulnerability.critical_exposure_review", "title": "Critical/high CVE exposure on managed hosts is within policy", "severityDefault": "critical", "isoReferences": ["A.12.6.1"] },
+
+    { "testKey": "crowdstrike.user.admin_role_review", "title": "Falcon console admin roles are limited to a reviewed set of accounts", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] }
+  ]
+}

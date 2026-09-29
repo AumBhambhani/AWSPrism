@@ -1,0 +1,19 @@
+{
+  "key": "check_point_mgmt",
+  "name": "Check Point Security Management",
+  "category": "network_security",
+  "authType": "api_key",
+  "tests": [
+    { "testKey": "check_point_mgmt.policy.cleanup_rule_present", "title": "Every access policy package ends with an explicit cleanup (drop) rule", "severityDefault": "high", "isoReferences": ["A.13.1.1"] },
+    { "testKey": "check_point_mgmt.policy.no_permissive_any_rule", "title": "No enabled access rule allows Any source, Any destination and Any service with Accept", "severityDefault": "high", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "check_point_mgmt.policy.rule_logging_enabled", "title": "Enforcing access rules have tracking set to Log", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "check_point_mgmt.policy.stealth_rule_present", "title": "A stealth rule protecting the gateways sits above the first permissive rule", "severityDefault": "medium", "isoReferences": ["A.13.1.1"] },
+    { "testKey": "check_point_mgmt.policy.disabled_rules_reviewed", "title": "Disabled rules are not left in the rulebase without a review comment", "severityDefault": "low", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "check_point_mgmt.gateway.policy_installed_current", "title": "Every managed gateway has an access policy installed", "severityDefault": "high", "isoReferences": ["A.12.1.2"] },
+    { "testKey": "check_point_mgmt.gateway.software_supported", "title": "No managed gateway runs an end-of-support software version", "severityDefault": "high", "isoReferences": ["A.12.6.1"] },
+    { "testKey": "check_point_mgmt.threat.profile_assigned", "title": "A Threat Prevention profile is bound to enforcing traffic", "severityDefault": "high", "isoReferences": ["A.12.2.1"] },
+    { "testKey": "check_point_mgmt.threat.mode_is_prevent", "title": "High-confidence Threat Prevention activations are set to Prevent, not Detect", "severityDefault": "high", "isoReferences": ["A.12.2.1"] },
+    { "testKey": "check_point_mgmt.threat.ips_signatures_current", "title": "The IPS signature database is current", "severityDefault": "high", "isoReferences": ["A.12.6.1"] },
+    { "testKey": "check_point_mgmt.threat.no_blanket_exceptions", "title": "Threat Prevention exception rules are not blanket Any/Any", "severityDefault": "medium", "isoReferences": ["A.12.2.1"] }
+  ]
+}

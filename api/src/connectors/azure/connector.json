@@ -1,0 +1,23 @@
+{
+  "key": "azure",
+  "title": "Microsoft Azure",
+  "category": "cloud",
+  "authTypes": ["oauth2"],
+  "tests": [
+    { "testKey": "azure.security.defender_enabled", "title": "Microsoft Defender for Cloud is enabled", "severityDefault": "medium", "isoReferences": ["A.12.1.1"] },
+    { "testKey": "azure.logging.activity_log_diagnostics_enabled", "title": "Activity Log diagnostic settings are configured", "severityDefault": "critical", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "azure.storage.public_access_blocked", "title": "Storage accounts block public blob access", "severityDefault": "critical", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "azure.network.nsg_no_open_ingress", "title": "Network security groups do not expose management ports publicly", "severityDefault": "critical", "isoReferences": ["A.13.1.1"] },
+    { "testKey": "azure.sql.transparent_data_encryption_enabled", "title": "SQL databases have transparent data encryption enabled", "severityDefault": "critical", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "azure.sql.public_network_access_disabled", "title": "SQL servers do not allow public network access", "severityDefault": "critical", "isoReferences": ["A.13.1.1"] },
+    { "testKey": "azure.sql.auditing_enabled", "title": "SQL server auditing is enabled", "severityDefault": "high", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "azure.keyvault.purge_protection_enabled", "title": "Key Vaults have purge protection enabled", "severityDefault": "high", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "azure.keyvault.rbac_authorization_enabled", "title": "Key Vaults use Azure RBAC instead of legacy access policies", "severityDefault": "medium", "isoReferences": ["A.9.1.2"] },
+    { "testKey": "azure.monitor.diagnostic_settings_cover_key_resources", "title": "Diagnostic settings are configured for key resource types", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "azure.policy.assignments_compliant", "title": "Assigned Azure Policy definitions report a compliant state", "severityDefault": "medium", "isoReferences": ["A.18.2.2"] },
+    { "testKey": "azure.compute.disk_encryption_enabled", "title": "Virtual machines have encryption at host enabled", "severityDefault": "high", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "azure.compute.no_public_ip_association", "title": "Virtual machines are not directly exposed via a public IP address", "severityDefault": "critical", "isoReferences": ["A.13.1.1"] },
+    { "testKey": "azure.subscription.no_classic_administrators", "title": "Subscription has no classic (co-)administrators", "severityDefault": "high", "isoReferences": ["A.9.2.3"] },
+    { "testKey": "azure.subscription.limited_owner_assignments", "title": "Subscription-scope Owner role assignments are limited", "severityDefault": "medium", "isoReferences": ["A.9.1.2"] }
+  ]
+}

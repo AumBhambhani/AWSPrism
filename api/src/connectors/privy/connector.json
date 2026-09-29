@@ -1,0 +1,30 @@
+{
+  "key": "privy",
+  "name": "Privy by IDfy",
+  "category": "data_governance",
+  "authType": "api_key",
+  "tests": [
+    { "testKey": "privy.consent.collection_points_registered", "title": "A consent-capture programme is operating", "severityDefault": "high", "isoReferences": ["A.18.1.1"] },
+    { "testKey": "privy.consent.artifacts_being_captured", "title": "Consent artefacts are actively being captured", "severityDefault": "high", "isoReferences": ["A.18.1.4"] },
+    { "testKey": "privy.consent.notice_versioned", "title": "Consent notices are versioned and reviewed", "severityDefault": "medium", "isoReferences": ["A.18.1.1"] },
+    { "testKey": "privy.consent.withdrawal_supported", "title": "Consent withdrawal is supported at every collection point", "severityDefault": "medium", "isoReferences": ["A.18.1.4"] },
+
+    { "testKey": "privy.rights.within_statutory_deadline", "title": "Data-principal rights requests are handled within the statutory deadline", "severityDefault": "high", "isoReferences": ["A.18.1.4"] },
+    { "testKey": "privy.rights.progressing", "title": "New rights requests are progressing, not sitting untouched", "severityDefault": "medium", "isoReferences": ["A.18.1.4"] },
+    { "testKey": "privy.rights.register_operating", "title": "The data-principal rights register is in active use", "severityDefault": "low", "isoReferences": ["A.18.1.4"] },
+
+    { "testKey": "privy.assessments.no_stale_in_progress", "title": "In-progress assessments are progressing, not stalled", "severityDefault": "medium", "isoReferences": ["A.18.2.2"] },
+    { "testKey": "privy.assessments.high_risks_mitigated", "title": "High risks on completed assessments are mitigated", "severityDefault": "high", "isoReferences": ["A.18.1.4"] },
+    { "testKey": "privy.assessments.dpia_process_operating", "title": "A PIA/DPIA process is operating", "severityDefault": "medium", "isoReferences": ["A.18.1.4"] },
+
+    { "testKey": "privy.incidents.no_stale_open", "title": "Open incidents are being worked, not left stale", "severityDefault": "medium", "isoReferences": ["A.16.1.5"] },
+    { "testKey": "privy.incidents.breach_decision_recorded", "title": "Breach-notification decisions are recorded promptly", "severityDefault": "high", "isoReferences": ["A.16.1.4"] },
+    { "testKey": "privy.incidents.register_operating", "title": "The incident register is in active use", "severityDefault": "low", "isoReferences": ["A.16.1.2"] },
+
+    { "testKey": "privy.tprm.processors_risk_assessed", "title": "Processors and third parties have a completed risk assessment", "severityDefault": "high", "isoReferences": ["A.15.1.1"] },
+    { "testKey": "privy.tprm.high_risk_reviewed", "title": "High-risk processors are reviewed at least annually", "severityDefault": "medium", "isoReferences": ["A.15.2.1"] },
+
+    { "testKey": "privy.inventory.ropa_populated", "title": "Records of Processing Activities (RoPA) is populated", "severityDefault": "high", "isoReferences": ["A.18.1.1"] },
+    { "testKey": "privy.inventory.records_have_owners", "title": "Data-inventory records have an assigned owner", "severityDefault": "medium", "isoReferences": ["A.8.1.2"] }
+  ]
+}

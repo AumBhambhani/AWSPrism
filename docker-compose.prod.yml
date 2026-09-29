@@ -1,0 +1,31 @@
+# Production overlay. Use it together with the base file:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# The base file's `web` service runs the Vite dev server with the source tree
+# bind-mounted, which must never be exposed publicly. This overlay swaps it for a
+# static nginx build and drops the source mounts from the api.
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_URL: ${VITE_API_URL:-}
+    environment: !reset {}
+    volumes: !reset []
+    ports: !override
+      - "127.0.0.1:${WEB_PORT}:8080"
+
+  api:
+    # Reachable only through the nginx reverse proxy (or via SSH tunnel for
+    # debugging) — never published to the network directly.
+    ports: !override
+      - "127.0.0.1:${API_PORT}:4000"
+    volumes: !override
+      - api_uploads:/app/uploads
+      - prism_exports:/app/exports
+
+  db:
+    ports: !override
+      - "127.0.0.1:5433:5432"

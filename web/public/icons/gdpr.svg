@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <circle cx="32" cy="32" r="28" stroke="#1e40af" stroke-width="2.5" fill="#1e40af" fill-opacity="0.08"/>
+  <g transform="translate(32,32)">
+    <circle cx="0" cy="-14" r="2.2" fill="#f59e0b"/>
+    <circle cx="12.1" cy="-7" r="2.2" fill="#f59e0b"/>
+    <circle cx="12.1" cy="7" r="2.2" fill="#f59e0b"/>
+    <circle cx="0" cy="14" r="2.2" fill="#f59e0b"/>
+    <circle cx="-12.1" cy="7" r="2.2" fill="#f59e0b"/>
+    <circle cx="-12.1" cy="-7" r="2.2" fill="#f59e0b"/>
+    <circle cx="-7" cy="-12.1" r="2.2" fill="#f59e0b"/>
+    <circle cx="7" cy="-12.1" r="2.2" fill="#f59e0b"/>
+    <circle cx="14" cy="0" r="2.2" fill="#f59e0b"/>
+    <circle cx="7" cy="12.1" r="2.2" fill="#f59e0b"/>
+    <circle cx="-7" cy="12.1" r="2.2" fill="#f59e0b"/>
+    <circle cx="-14" cy="0" r="2.2" fill="#f59e0b"/>
+  </g>
+  <path d="M26 28 L30 32 L38 24" stroke="#1e40af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect x="24" y="35" width="16" height="2" rx="1" fill="#1e40af" opacity="0.5"/>
+  <rect x="27" y="39" width="10" height="2" rx="1" fill="#1e40af" opacity="0.3"/>
+</svg>

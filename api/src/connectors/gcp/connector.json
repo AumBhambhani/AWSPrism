@@ -1,0 +1,18 @@
+{
+  "key": "gcp",
+  "title": "Google Cloud Platform",
+  "category": "cloud",
+  "authTypes": ["oauth2"],
+  "tests": [
+    { "testKey": "gcp.iam.owner_role_assignments_limited", "title": "Project-level Owner role assignments are limited", "severityDefault": "medium", "isoReferences": ["A.9.1.2"] },
+    { "testKey": "gcp.iam.service_account_keys_rotated", "title": "User-managed service account keys are rotated regularly", "severityDefault": "high", "isoReferences": ["A.9.2.4"] },
+    { "testKey": "gcp.storage.buckets_not_publicly_accessible", "title": "Cloud Storage buckets enforce public access prevention", "severityDefault": "critical", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "gcp.compute.instances_no_public_ip", "title": "Compute Engine instances are not directly exposed via a public IP address", "severityDefault": "critical", "isoReferences": ["A.13.1.1"] },
+    { "testKey": "gcp.compute.shielded_vm_enabled", "title": "Compute Engine instances have Shielded VM protections enabled", "severityDefault": "high", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "gcp.sql.ssl_enforced", "title": "Cloud SQL instances require SSL/TLS for connections", "severityDefault": "critical", "isoReferences": ["A.8.2.3"] },
+    { "testKey": "gcp.sql.public_access_disabled", "title": "Cloud SQL instances do not authorize connections from any address", "severityDefault": "critical", "isoReferences": ["A.13.1.1"] },
+    { "testKey": "gcp.kms.key_rotation_enabled", "title": "Cloud KMS symmetric keys have automatic rotation enabled", "severityDefault": "medium", "isoReferences": ["A.10.1.2"] },
+    { "testKey": "gcp.network.firewall_no_open_management_ports", "title": "Firewall rules do not expose management ports publicly", "severityDefault": "critical", "isoReferences": ["A.13.1.1"] },
+    { "testKey": "gcp.logging.data_access_audit_logs_enabled", "title": "Data Access audit logs are enabled for all services", "severityDefault": "high", "isoReferences": ["A.12.4.1"] }
+  ]
+}

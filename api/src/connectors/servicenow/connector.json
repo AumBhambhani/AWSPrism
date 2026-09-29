@@ -1,0 +1,25 @@
+{
+  "key": "servicenow",
+  "name": "ServiceNow",
+  "category": "business_apps",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "servicenow.user.no_inactive_privileged", "title": "No inactive users retain a privileged role", "severityDefault": "high", "isoReferences": ["A.9.2.1"] },
+    { "testKey": "servicenow.user.mfa_enforced", "title": "Multi-factor authentication is enforced instance-wide", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+
+    { "testKey": "servicenow.role.admin_count_within_policy", "title": "Number of users with the admin role is within policy", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+
+    { "testKey": "servicenow.acl.default_deny_sensitive_tables", "title": "Sensitive tables have explicit (non-public) ACLs defined", "severityDefault": "high", "isoReferences": ["A.9.4.1"] },
+
+    { "testKey": "servicenow.group.privileged_groups_reviewed", "title": "Privileged groups have a bounded, reviewed membership", "severityDefault": "medium", "isoReferences": ["A.9.2.5"] },
+
+    { "testKey": "servicenow.integrationuser.web_service_only", "title": "Integration/service accounts are restricted to web service access", "severityDefault": "high", "isoReferences": ["A.9.2.3"] },
+
+    { "testKey": "servicenow.password_policy.strength_enforced", "title": "Password policy meets minimum strength requirements", "severityDefault": "high", "isoReferences": ["A.9.4.3"] },
+
+    { "testKey": "servicenow.audit.field_audit_enabled", "title": "Field-level audit history is enabled for sensitive tables", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "servicenow.audit.login_activity_logged", "title": "User login activity is logged and retrievable", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+
+    { "testKey": "servicenow.oauth.basic_auth_restricted", "title": "Basic Authentication is restricted for REST API access", "severityDefault": "high", "isoReferences": ["A.9.4.2"] }
+  ]
+}

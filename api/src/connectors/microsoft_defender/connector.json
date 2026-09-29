@@ -1,0 +1,15 @@
+{
+  "key": "microsoft_defender",
+  "name": "Microsoft Defender",
+  "category": "endpoint_security",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "microsoft_defender.devices.onboarding_coverage_complete", "title": "Managed devices are onboarded to Defender for Endpoint", "severityDefault": "high", "isoReferences": ["A.8.1.1"] },
+    { "testKey": "microsoft_defender.devices.sensor_health_active", "title": "Onboarded devices report active sensor health", "severityDefault": "medium", "isoReferences": ["A.12.2.1"] },
+    { "testKey": "microsoft_defender.devices.high_exposure_devices_remediated", "title": "High-exposure devices have an active remediation plan", "severityDefault": "high", "isoReferences": ["A.12.6.1"] },
+    { "testKey": "microsoft_defender.vulnerabilities.critical_cves_remediated", "title": "Critical vulnerabilities with a public exploit are remediated within SLA", "severityDefault": "critical", "isoReferences": ["A.12.6.1"] },
+    { "testKey": "microsoft_defender.recommendations.high_impact_open_reviewed", "title": "High-impact security recommendations are actioned or have a documented exception", "severityDefault": "high", "isoReferences": ["A.12.6.1"] },
+    { "testKey": "microsoft_defender.alerts.high_severity_triaged_promptly", "title": "High and critical severity alerts are triaged within SLA", "severityDefault": "critical", "isoReferences": ["A.16.1.5"] },
+    { "testKey": "microsoft_defender.alerts.no_unassigned_critical_alerts", "title": "Critical alerts are assigned to an owner", "severityDefault": "medium", "isoReferences": ["A.16.1.2"] }
+  ]
+}

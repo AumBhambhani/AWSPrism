@@ -1,0 +1,16 @@
+.env
+.env.*
+*.env
+node_modules
+.git
+.claude
+.scan-reports
+.kiro
+npm-debug.log
+*.log
+exports/
+uploads/
+prism_dpdp/data/
+__pycache__/
+*.pyc
+*.pyo

@@ -1,0 +1,23 @@
+{
+  "key": "entra_id",
+  "name": "Microsoft Entra ID",
+  "category": "identity",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "entra_id.mfa.conditional_access_enforced", "title": "Multi-factor authentication is enforced tenant-wide", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "entra_id.conditionalaccess.legacy_auth_blocked", "title": "Conditional Access blocks legacy authentication", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "entra_id.authmethods.weak_methods_disabled", "title": "Weak authentication methods are disabled", "severityDefault": "medium", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "entra_id.roles.privileged_role_assignments_limited", "title": "Global Administrator assignments are limited and not permanent", "severityDefault": "high", "isoReferences": ["A.9.2.3"] },
+    { "testKey": "entra_id.roles.other_privileged_roles_reviewed", "title": "Other built-in privileged roles have limited assignment counts", "severityDefault": "medium", "isoReferences": ["A.9.2.3"] },
+    { "testKey": "entra_id.roles.privileged_users_mfa_registered", "title": "Users with an active admin role have MFA registered", "severityDefault": "critical", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "entra_id.users.stale_guest_accounts_reviewed", "title": "Inactive guest accounts are disabled or removed", "severityDefault": "high", "isoReferences": ["A.9.2.6"] },
+    { "testKey": "entra_id.users.mfa_registration_reviewed", "title": "Member users have MFA registered", "severityDefault": "high", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "entra_id.signins.legacy_auth_signins_absent", "title": "No successful legacy authentication sign-ins are observed", "severityDefault": "high", "isoReferences": ["A.9.4.2"] },
+    { "testKey": "entra_id.signins.risky_signins_resolved", "title": "Risky sign-ins are investigated and resolved", "severityDefault": "high", "isoReferences": ["A.16.1.2"] },
+    { "testKey": "entra_id.groups.privileged_groups_have_owners", "title": "Role-assignable groups have an assigned owner", "severityDefault": "high", "isoReferences": ["A.9.2.3"] },
+    { "testKey": "entra_id.enterpriseapps.high_privilege_grants_reviewed", "title": "Enterprise apps with high-privilege Graph permissions are reviewed", "severityDefault": "high", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "entra_id.appregistrations.credentials_not_expiring_soon", "title": "App registration secrets and certificates are rotated before expiry", "severityDefault": "medium", "isoReferences": ["A.9.2.4"] },
+    { "testKey": "entra_id.audit.signin_and_directory_logs_available", "title": "Sign-in and directory audit logs are actively retained", "severityDefault": "critical", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "entra_id.audit.privileged_role_changes_actor_captured", "title": "Privileged role management audit entries record an identifiable actor", "severityDefault": "high", "isoReferences": ["A.12.4.1"] }
+  ]
+}

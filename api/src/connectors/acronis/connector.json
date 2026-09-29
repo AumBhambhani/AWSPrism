@@ -1,0 +1,18 @@
+{
+  "key": "acronis",
+  "name": "Acronis Cyber Protect Cloud",
+  "category": "backup",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "acronis.backup.protection_enabled", "title": "Every workload has an assigned protection plan", "severityDefault": "high", "isoReferences": ["A.12.3.1"] },
+    { "testKey": "acronis.backup.recent_successful_backup", "title": "Backups have completed within the expected window", "severityDefault": "high", "isoReferences": ["A.12.3.1"] },
+
+    { "testKey": "acronis.malware.scan_up_to_date", "title": "Anti-malware scans have completed within the expected window", "severityDefault": "medium", "isoReferences": ["A.12.2.1"] },
+    { "testKey": "acronis.malware.no_open_detections", "title": "No unresolved malware or ransomware alerts", "severityDefault": "critical", "isoReferences": ["A.12.2.1"] },
+
+    { "testKey": "acronis.vulnerability.no_open_findings", "title": "No open vulnerability-assessment findings past SLA", "severityDefault": "high", "isoReferences": ["A.12.6.1"] },
+    { "testKey": "acronis.vulnerability.patches_applied", "title": "Outstanding patches are applied within the expected window", "severityDefault": "medium", "isoReferences": ["A.12.6.1"] },
+
+    { "testKey": "acronis.monitoring.no_open_critical_alerts", "title": "No unresolved critical or error alerts", "severityDefault": "high", "isoReferences": ["A.16.1.5"] }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "key": "check_point",
+  "name": "Check Point Infinity",
+  "category": "endpoint_security",
+  "authType": "api_key",
+  "tests": [
+    { "testKey": "check_point.events.query_retrievable", "title": "A baseline Infinity Events query completes (log availability / retention sanity)", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "check_point.events.feed_active", "title": "Infinity Events has recorded security events within the lookback window", "severityDefault": "medium", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "check_point.events.critical_events_reviewed", "title": "Critical-severity events are not left unacknowledged past the triage SLA", "severityDefault": "high", "isoReferences": ["A.16.1.5"] },
+    { "testKey": "check_point.xdr.feed_active", "title": "Infinity XDR/XPR has produced detections or incidents within the lookback window", "severityDefault": "low", "isoReferences": ["A.12.4.1"] },
+    { "testKey": "check_point.xdr.high_incidents_triaged", "title": "High and critical XDR/XPR incidents are not open past the triage SLA", "severityDefault": "critical", "isoReferences": ["A.16.1.5"] },
+    { "testKey": "check_point.xdr.no_stale_investigations", "title": "XDR/XPR incidents are not left un-progressed past the review window", "severityDefault": "medium", "isoReferences": ["A.16.1.4"] },
+    { "testKey": "check_point.endpoint.devices_checked_in", "title": "Harmony Endpoint devices have checked in within the staleness threshold", "severityDefault": "high", "isoReferences": ["A.8.1.1"] },
+    { "testKey": "check_point.endpoint.protection_blades_active", "title": "The assigned Endpoint policy keeps Anti-Malware, Anti-Ransomware and Threat Emulation enabled", "severityDefault": "high", "isoReferences": ["A.12.2.1"] },
+    { "testKey": "check_point.endpoint.signatures_current", "title": "Endpoint anti-malware signature age is within the threshold", "severityDefault": "medium", "isoReferences": ["A.12.6.1"] },
+    { "testKey": "check_point.endpoint.high_incidents_resolved", "title": "No unresolved high-severity endpoint incidents past the review window", "severityDefault": "medium", "isoReferences": ["A.16.1.5"] }
+  ]
+}

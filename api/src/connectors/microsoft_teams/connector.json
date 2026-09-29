@@ -1,0 +1,16 @@
+{
+  "key": "microsoft_teams",
+  "name": "Microsoft Teams",
+  "category": "collaboration",
+  "authType": "oauth2",
+  "tests": [
+    { "testKey": "microsoft_teams.externalaccess.federation_domains_restricted", "title": "External domain federation is restricted, not fully open", "severityDefault": "critical", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "microsoft_teams.externalaccess.consumer_teams_blocked", "title": "Communication with unmanaged consumer Teams/Skype accounts is blocked", "severityDefault": "high", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "microsoft_teams.client.guest_access_reviewed", "title": "The Teams client's tenant-wide guest access toggle is a reviewed, deliberate setting", "severityDefault": "high", "isoReferences": ["A.9.2.6"] },
+    { "testKey": "microsoft_teams.client.unsanctioned_storage_providers_disabled", "title": "Unsanctioned third-party cloud storage providers are disabled in the Teams client", "severityDefault": "medium", "isoReferences": ["A.13.2.1"] },
+    { "testKey": "microsoft_teams.guests.meeting_capabilities_restricted", "title": "Guest meeting capabilities are limited to what's required", "severityDefault": "medium", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "microsoft_teams.policies.meeting_anonymous_join_restricted", "title": "The global meeting policy does not auto-admit anonymous or unknown external participants", "severityDefault": "critical", "isoReferences": ["A.9.4.1"] },
+    { "testKey": "microsoft_teams.policies.meeting_recording_retention_bounded", "title": "Meeting recording retention is bounded, not set to never expire", "severityDefault": "medium", "isoReferences": ["A.18.1.3"] },
+    { "testKey": "microsoft_teams.policies.thirdparty_app_installation_restricted", "title": "Third-party Teams app installation is governed by an explicit allow-list", "severityDefault": "medium", "isoReferences": ["A.12.5.1"] }
+  ]
+}

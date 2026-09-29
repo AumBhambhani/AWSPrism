@@ -1,0 +1,6 @@
+# Force LF for files that must have Unix line endings in the container
+*.sh        text eol=lf
+*.py        text eol=lf
+Dockerfile  text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
